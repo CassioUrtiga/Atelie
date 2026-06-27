@@ -1,0 +1,51 @@
+{% extends './base.html' %}
+{% load static %}
+
+{% block css %}
+  <link rel="stylesheet" href="{% static 'css/login.css' %}">
+{% endblock css %}
+
+{% block title %}
+  <title>Cadastro</title>
+{% endblock title %}
+
+{% block content %}
+  <main>
+    <fieldset>
+      <h1><a href="{% url 'inicio' %}">Ateliê</a></h1>
+      {% for message in messages %}
+        {% if message.tags == 'error' %}
+          <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% elif message.tags == 'success' %}
+          <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% elif message.tags == 'warning' %}
+          <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endif %}
+      {% endfor %}
+      <span class="padding-bottom-top">Faça sua conta</span>
+      <form action="{% url 'cadastrar' %}" method="post" autocomplete="off">
+        {% csrf_token %}
+        {{ form }}
+        <div class="field padding-bottom--24">
+          <input type="submit" name="submit" value="Cadastrar">
+        </div>
+      </form>
+      <div class="footer-link">
+        <span>Já tem uma conta? <a href="{% url 'login' %}">Login</a></span>
+        <div class="listing padding-bottom--24 flex-flex center-center" style="margin-top: 20px;">
+          <span><a href="#">© Ateliê</a></span>
+          <span><a href="#">Contato</a></span>
+        </div>
+      </div>
+    </fieldset>
+  </main>
+{% endblock content %}

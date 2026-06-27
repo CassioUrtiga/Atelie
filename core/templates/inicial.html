@@ -1,0 +1,270 @@
+{% extends './base.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Lato:300i,400,400i,700%7CMontserrat:400,500,600,700%7CPlayfair+Display:400,700,700i%7COswald:400,700,700i">
+    <link rel="stylesheet" href="{% static 'css/page_inicial.css' %}">
+{% endblock css %}
+
+{% block title %}
+    <title>Alfaiataria costuras</title>
+{% endblock title %}
+
+{% block content %}
+    <main>
+        <div class="preloader">
+            <div class="preloader-body"> 
+              <div class="cssload-jumping">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </div>
+        </div>
+    
+        <div class="page">
+        
+        <header class="fixed-top">
+            <h3>DAGUIA</h3>
+            <div>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'dashboard' %}">
+                        <button type="button" class="btn btn-primary">Página dashboard</button>
+                    </a>
+                    <a href="{% url 'deslogar' %}">
+                        <button type="button" class="btn btn-danger">Sair</button>
+                    </a>
+                {% else %}
+                    <div class="d-flex">
+                        <div class="box-button">
+                            <a 
+                                href="{% url 'login' %}" 
+                                data-texto="Login" 
+                                style="--cor-botao: #5469d4;">
+                            </a>
+                        </div>
+
+                        <div class="box-button">
+                            <a 
+                                href="{% url 'cadastrar' %}" 
+                                data-texto="Cadastrar" 
+                                style="--cor-botao: #198754;">
+                            </a>
+                        </div>
+                        
+                    </div>
+                {% endif %}
+            </div>
+        </header>
+
+        <!-- Swiper -->
+        <section class="section swiper-container swiper-slider swiper-slider-1 slider-scale-effect" data-loop="false" data-autoplay="5500" data-simulate-touch="false" data-slide-effect="fade">
+            <div class="swiper-wrapper">
+            <div class="swiper-slide slide-bg-1">
+                <div class="slide-bg swiper-white-filter" style="background-image: url(&quot;{% static 'imgs/page_inicial/plano1.jpg' %}&quot;)"></div>
+                <div class="swiper-slide-caption section-md">
+                <div class="container">
+                    <div class="row">
+                    <div class="col-sm-10 col-lg-8 col-xl-7">
+                        <h1 class="heading-decorate" data-caption-animate="fadeInUp" data-caption-delay="100">Descubra a praticidade<br><span class="divider"></span>cuide da sua beleza.
+                        </h1>
+                        <p class="lead" data-caption-animate="fadeInUp" data-caption-delay="250">Não perca mais tempo procurando salões de beleza. conheça nossos parceiros e tenha acesso a diversos serviços de beleza em um só lugar.</p>
+                    </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+            <div class="swiper-slide slide-bg-2">
+                <div class="slide-bg swiper-white-filter" style="background-image: url(&quot;{% static 'imgs/page_inicial/plano2.jpg' %}&quot;)"></div>
+                <div class="swiper-slide-caption section-md">
+                <div class="container">
+                    <div class="row">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <h1 class="heading-decorate" data-caption-animate="fadeInUp" data-caption-delay="100">Experimente o melhor <br><span class="divider"></span>serviço de salões
+                        </h1>
+                        <p class="lead" data-caption-animate="fadeInUp" data-caption-delay="250">Oferecemos uma gama completa de serviços de beleza. Confie sua beleza a profissionais que realmente se importam com o seu estilo e visual!</p>
+                    </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+            <div class="swiper-slide slide-bg-3">
+                <div class="slide-bg swiper-white-filter" style="background-image: url(&quot;{% static 'imgs/page_inicial/plano3.jpg' %}&quot;)"></div>
+                <div class="swiper-slide-caption section-md">
+                <div class="container">
+                    <div class="row">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <h1 class="heading-decorate" data-caption-animate="fadeInUp" 
+                        data-caption-delay="100">Diversos salões<br><span class="divider"></span>especializados
+                        </h1>
+                        <p class="lead" data-caption-animate="fadeInUp" data-caption-delay="250">Mude sua aparência e renove sua autoestima em nossos salões de belezas especializados em diversas áreas.</p>
+                    </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+            </div>
+            <!-- Swiper Pagination-->
+            <div class="swiper-pagination"></div>
+            <div class="swiper-counter"></div>
+            <!-- Swiper Navigation-->
+            <div class="swiper-button-prev">
+            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="17px" height="30px" viewbox="0 0 17 30" enable-background="new 0 0 17 30" xml:space="preserve">
+                <g>
+                <defs>
+                    <rect id="SVGID_111_" width="17" height="30"></rect>
+                </defs>
+                <clippath id="SVGID_2222_">
+                    <use xlink:href="#SVGID_111_" overflow="visible"></use>
+                </clippath>
+                <line clip-path="url(#SVGID_2222_)" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="8.5" y1="0.833" x2="8.5" y2="29.167"></line>
+                <polyline clip-path="url(#SVGID_2222_)" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="									    16.15,20.833 8.5,29.167 0.85,20.833 	"></polyline>
+                </g>
+            </svg>
+            </div>
+            <div class="swiper-button-next">
+            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="17px" height="30px" viewbox="0 0 17 30" enable-background="new 0 0 17 30" xml:space="preserve">
+                <g>
+                <defs>
+                    <rect id="SVGID_1_" width="17" height="30"></rect>
+                </defs>
+                <clippath id="SVGID_2_">
+                    <use xlink:href="#SVGID_1_" overflow="visible"></use>
+                </clippath>
+                <line clip-path="url(#SVGID_2_)" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="8.5" y1="29.167" x2="8.5" y2="0.833"></line>
+                <polyline clip-path="url(#SVGID_2_)" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="									    0.85,9.167 8.5,0.833 16.15,9.167 	"></polyline>
+                </g>
+            </svg>
+            </div>
+        </section>
+    
+        <section class="section section-lg bg-gray-100">
+            <div class="container">
+                <div class="row row-50 align-items-lg-center justify-content-xl-between">
+                    <div class="col-lg-6 text-center">
+                        <div class="block-parallax-element">
+                            <span class="prev-element" data-parallax-scroll="{&quot;y&quot;: -30, &quot;x&quot;: 0,  &quot;smoothness&quot;: 50 }"></span>
+                            <img src="{% static 'imgs/page_inicial/salao.jpg' %}" alt="" width="378" height="463"/>
+                            <span class="next-element" data-parallax-scroll="{&quot;y&quot;: 30, &quot;x&quot;: 0,  &quot;smoothness&quot;: 50 }"></span>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-xl-5">
+                        <h2 class="heading-decorate"><span class="divider"></span>Sobre nós</h2>
+                        <p class="big text-gray-800">
+                            O site de gerenciamento de salões de beleza foi desenvolvido com o objetivo de conectar clientes a salões de beleza de qualidade. Nosso foco é facilitar a busca pelos melhores salões especializados, assegurando que você obtenha os serviços necessários para se sentir e parecer incrível.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    
+        <section class="section section-lg bg-default">
+            <div class="container">
+                <div class="row row-50 align-items-lg-center justify-content-xl-between">
+                    <div class="col-lg-6">
+                    <div class="block-xs">
+                        <h2 class="heading-decorate">Realizar<br><span class="divider"></span>Agendamentos
+                        </h2>
+                        <p class="big text-gray-800">
+                            Agendar os serviços que você precisa em um salão de beleza próximo fica mais fácil. Basta visualizar os serviços disponíveis e marcar o horário que melhor se adequa à sua agenda. Com o sistema de agendamento online, é possível agendar seus serviços de beleza a qualquer hora e em qualquer lugar, tanto para homens quanto para mulheres.
+                        </p>
+                    </div>
+                    </div>
+                    <div class="col-lg-6">
+                    <div class="box-images-classic">
+                        <div class="row row-30">
+                        <div class="col-6">
+                            <div class="box-image-item" data-parallax-scroll="{&quot;y&quot;: 0, &quot;x&quot;: -20,  &quot;smoothness&quot;: 30 }"><img src="{% static 'imgs/page_inicial/homem.jpg' %}" alt="" width="270" height="458"/>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="box-image-item" data-parallax-scroll="{&quot;y&quot;: 0, &quot;x&quot;: 20,  &quot;smoothness&quot;: 30 }"><img src="{% static 'imgs/page_inicial/mulher.jpg' %}" alt="" width="270" height="458"/>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    
+        <section class="section section-md bg-default text-center">
+            <div class="container">
+            <h2>Alguns serviços que pode encontrar</h2>
+            <div class="divider-lg"></div>
+            <p class="block-lg">
+                Você encontrará uma ampla gama de serviços de beleza oferecidos por salões especializados em diversas áreas. Desde cortes de cabelo até manicure e pedicure, entre outros. Explore todas as opções disponíveis e agende seu próximo tratamento de beleza agora mesmo.
+            </p>
+            </div>
+            <div class="container">
+            <div class="row row-20">
+                <div class="col-12">
+                <!-- Owl Carousel-->
+                <div class="owl-carousel owl-carousel-center" data-items="1" data-md-items="3" data-xl-items="5" data-dots="false" data-nav="true" data-stage-padding="0" data-loop="true" data-margin="0" data-mouse-drag="false" data-center="true" data-autoplay="true" style="touch-action: none;">
+                    <div class="team-minimal">
+                    <figure><img src="{% static 'imgs/page_inicial/unhas.jpg' %}" alt="" width="380" height="380"></figure>
+                    <div class="team-minimal-caption">
+                        <h4 class="team-title">Manicure e pedicure</h4>
+                        <p>Procure entre os serviços disponiveis</p>
+                    </div>
+                    </div>
+                    <div class="team-minimal">
+                    <figure><img src="{% static 'imgs/page_inicial/pets.jpg' %}" alt="" width="380" height="380"></figure>
+                    <div class="team-minimal-caption">
+                        <h4 class="team-title">Dê um up no seu pet</h4>
+                        <p>Encontre salões especializados em pets</p>
+                    </div>
+                    </div>
+                    <div class="team-minimal">
+                    <figure><img src="{% static 'imgs/page_inicial/sobrancelhas.jpg' %}" alt="" width="380" height="380"></figure>
+                    <div class="team-minimal-caption">
+                        <h4 class="team-title">Sobrancelhas</h4>
+                        <p>Design de sobrancelhas</p>
+                    </div>
+                    </div>
+                    <div class="team-minimal">
+                    <figure><img src="{% static 'imgs/page_inicial/corte-cabelo.jpg' %}" alt="" width="380" height="380"></figure>
+                    <div class="team-minimal-caption">
+                        <h4 class="team-title">Cortes de cabelo</h4>
+                        <p>Renove seu visual com cortes estilosos</p>
+                    </div>
+                    </div>
+                    <div class="team-minimal">
+                    <figure><img src="{% static 'imgs/page_inicial/maquiagem.jpg' %}" alt="" width="380" height="380"></figure>
+                    <div class="team-minimal-caption">
+                        <h4 class="team-title">Maquiagem</h4>
+                        <p>Realce sua beleza com maquiagens</p>
+                    </div>
+                    </div>
+                    <div class="team-minimal">
+                    <figure><img src="{% static 'imgs/page_inicial/penteados.jpg' %}" alt="" width="380" height="380"></figure>
+                    <div class="team-minimal-caption">
+                        <h4 class="team-title">Coloração e penteados</h4>
+                        <p>Dê vida ao seu cabelo, masculino ou feminino</p>
+                    </div>
+                    </div>
+                    <div class="team-minimal">
+                    <figure><img src="{% static 'imgs/page_inicial/tatuagens.jpg' %}" alt="" width="380" height="380"></figure>
+                    <div class="team-minimal-caption">
+                        <h4 class="team-title">Tatuagens</h4>
+                        <p>Encontre salões especializados em tatuagens</p>
+                    </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+            </div>
+        </section>
+        
+          
+    </main>
+    
+{% endblock content %}
+
+{% block script %}
+    <script src="{% static 'js/page_inicial/plugins.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.4.2/js/swiper.jquery.min.js" integrity="sha512-kZuRlVjyG3pnsZyFvfSlIeXQDOWRvZQo4+81+g+dybUUUHTgI9vtr1259r44u3X5cmlOP3+x5oSeAaMVfE1fyg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.2.1/owl.carousel.min.js" integrity="sha512-lo4YgiwkxsVIJ5mex2b+VHUKlInSK2pFtkGFRzHsAL64/ZO5vaiCPmdGP3qZq1h9MzZzghrpDP336ScWugUMTg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="{% static 'js/page_inicial/script.js' %}"></script>
+{% endblock script %}

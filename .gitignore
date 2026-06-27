@@ -1,0 +1,15 @@
+venv/
+
+__pycache__
+
+*.*~
+
+*.pyc
+
+.idea
+
+.env
+
+media/fotos_perfil/*
+
+!media/fotos_perfil/default.thumbnail.png

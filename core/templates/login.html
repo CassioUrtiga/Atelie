@@ -1,0 +1,70 @@
+{% extends './base.html' %}
+{% load static %}
+
+{% block css %}
+  <link rel="stylesheet" href="{% static 'css/login.css' %}">
+{% endblock css %}
+
+{% block title %}
+  <title>Login</title>
+{% endblock title %}
+
+{% block content %}
+  <main>
+    <fieldset>
+      <h1><a href="{% url 'inicio' %}">Ateliê</a></h1>
+      {% for message in messages %}
+        {% if message.tags == 'error' %}
+          <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% elif message.tags == 'success' %}
+          <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endif %}
+      {% endfor %}
+      <span class="padding-bottom-top">Entre na sua conta</span>
+      <form action="{% url 'login' %}" method="post" autocomplete="off">
+        {% csrf_token %}
+        <div class="field padding-bottom--24">
+          <label for="pessoa">Usuário</label>
+          <input 
+            type="text" 
+            name="usuario"
+            placeholder="Informe seu nome de usuário" 
+            required
+          >
+        </div>
+        <div class="field padding-bottom--24">
+          <div class="reset-pass">
+            <label for="senha">Senha</label>
+            <a href="#">Esqueceu a senha?</a>
+          <div>
+        </div>
+        </div>
+          <input 
+            type="password" 
+            name="senha" 
+            maxlength="12" 
+            minlength="5" 
+            placeholder="Informe sua senha" 
+            required
+          >
+        </div>
+        <div class="field padding-bottom--24">
+          <input type="submit" name="submit" value="Continuar">
+        </div>
+      </form>
+      <div class="footer-link">
+        <span>Não tem uma conta? <a href="{% url 'cadastrar' %}">Cadastre-se</a></span>
+        <div class="listing padding-bottom--24 flex-flex center-center" style="margin-top: 20px;">
+          <span><a href="#">© Ateliê</a></span>
+          <span><a href="#">Contato</a></span>
+        </div>
+      </div>
+    </fieldset>
+  </main>
+{% endblock content %}
