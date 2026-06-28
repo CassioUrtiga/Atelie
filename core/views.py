@@ -84,20 +84,16 @@ def cadastrar_usuario_view(request):
 def dashboard_view(request):
 
     is_cliente = hasattr(request.user, 'cliente')
-    print(is_cliente)
 
     if is_cliente:
-        tipo = 'Cliente'
         nome = request.user.cliente.nome
         telefone = request.user.cliente.telefone
     else:
-        tipo = 'Proprietário'
         nome = request.user.proprietario.nome 
         telefone = request.user.proprietario.telefone
 
     context = {
         'isCliente': is_cliente,
-        'tipo': tipo,
         'nome': nome,
         'telefone': telefone
     }

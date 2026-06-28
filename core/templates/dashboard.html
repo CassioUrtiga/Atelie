@@ -2,21 +2,33 @@
 {% load static %}
 
 {% block css %}
-        
+    {% if isCliente %}
+        <link rel="stylesheet" href="{% static 'css/cliente.css' %}">
+    {% else %}
+        <link rel="stylesheet" href="{% static 'css/proprietario.css' %}">
+    {% endif %}
 {% endblock css %}
 
 {% block title %}
-    <title>Salões</title>
+    <title>
+        {% if isCliente %}Cliente{% else %}Proprietário{% endif %}
+    </title>
 {% endblock title %}
 
 {% block content %}
 
-    <h1>Nome: {{ nome|title }}</h1>
-    <h1>Telefone: {{ telefone }}</h1>
-    <h1>Tipo: {{ tipo }}</h1>
+    {% if isCliente %}
+        {% include "cliente.html" %}
+    {% else %}
+        {% include "proprietario.html" %}
+    {% endif %}
     
 {% endblock content %}
 
 {% block script %}
-        
+    {% if isCliente %}
+        <script src="{% static 'js/cliente.js' %}"></script>
+    {% else %}
+        <script src="{% static 'js/proprietario.js' %}"></script>
+    {% endif %}
 {% endblock script %}
