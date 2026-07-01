@@ -16,8 +16,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.core.files.base import ContentFile
 from PIL import Image
 
-from .forms import CadastroCliente
-from .models import Cliente, Proprietario
+from .forms import CadastroCliente, CadastroPedido
+from .models import Cliente, Administrador, Servico, Pedido, ImagemPedido
 
 
 # Views
@@ -86,17 +86,67 @@ def dashboard_view(request):
     is_cliente = hasattr(request.user, 'cliente')
 
     if is_cliente:
-        nome = request.user.cliente.nome
-        telefone = request.user.cliente.telefone
+        context = {
+            'isCliente': is_cliente,
+            'nome': request.user.cliente.nome,
+            'telefone': request.user.cliente.telefone,
+            'qtde_servico': Servico.objects.count(),
+            'form': CadastroPedido(),
+            'pedidos': Pedido.objects.filter(cliente=request.user.cliente)
+        }
     else:
-        nome = request.user.proprietario.nome 
-        telefone = request.user.proprietario.telefone
-
-    context = {
-        'isCliente': is_cliente,
-        'nome': nome,
-        'telefone': telefone
-    }
+        context = {
+            'isCliente': is_cliente,
+            'nome': request.user.administrador.nome,
+            'telefone': request.user.administrador.telefone
+        }
     
     return render(request, 'dashboard.html', context)
+
+@login_required(login_url='login')
+def cadastrar_pedido_view(request):   
+    form_pedido = CadastroPedido(request.POST)
+    
+    if form_pedido.is_valid():
+        pedido = form_pedido.save(commit=False)
+        pedido.cliente = request.user.cliente
+        pedido.save()
+
+        # Salva as imagens
+        imagens_lista = request.POST.getlist('image')
+
+        try:
+            for index, imagem in enumerate(imagens_lista):
+                if not imagem:
+                    continue
+                    
+                imagem_decodificada = decode_base64_image(imagem)
+                
+                with tempfile.NamedTemporaryFile(suffix='.jpeg', delete=False) as temp_file:
+                    imagem_decodificada.save(temp_file, format='JPEG')
+                    temp_file.seek(0)
+                    file_content = temp_file.read()
+                
+                content_file = ContentFile(file_content)
+                nova_imagem_objeto = ImagemPedido()
+                nova_imagem_objeto.img.save(temp_file.name, content_file)
+                
+                pedido.img.add(nova_imagem_objeto)
+        except Exception as e:
+            messages.error(request, 'ERRO! ao processar a imagem.')
+            return redirect('dashboard')
         
+        form_pedido.save_m2m()
+        
+        messages.success(request, 'Pedido realizado com sucesso!')
+        return redirect('dashboard')
+    else:
+        messages.error(request, 'ERRO! dados inválidos ou incompletos')
+        return redirect('dashboard')    
+
+
+def decode_base64_image(base64_string):
+    encoded_data = base64_string.split(',')[1]
+    image_data = base64.b64decode(encoded_data)
+    image = Image.open(BytesIO(image_data))
+    return image

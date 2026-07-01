@@ -10,6 +10,4 @@ __pycache__
 
 .env
 
-media/fotos_perfil/*
-
-!media/fotos_perfil/default.thumbnail.png
+media/img_pedidos/*

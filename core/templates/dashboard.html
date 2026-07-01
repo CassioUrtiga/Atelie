@@ -4,14 +4,15 @@
 {% block css %}
     {% if isCliente %}
         <link rel="stylesheet" href="{% static 'css/cliente.css' %}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.css">
     {% else %}
-        <link rel="stylesheet" href="{% static 'css/proprietario.css' %}">
+        <link rel="stylesheet" href="{% static 'css/administrador.css' %}">
     {% endif %}
 {% endblock css %}
 
 {% block title %}
     <title>
-        {% if isCliente %}Cliente{% else %}Proprietário{% endif %}
+        {% if isCliente %}Cliente{% else %}Administrador{% endif %}
     </title>
 {% endblock title %}
 
@@ -20,7 +21,7 @@
     {% if isCliente %}
         {% include "cliente.html" %}
     {% else %}
-        {% include "proprietario.html" %}
+        {% include "administrador.html" %}
     {% endif %}
     
 {% endblock content %}
@@ -28,7 +29,8 @@
 {% block script %}
     {% if isCliente %}
         <script src="{% static 'js/cliente.js' %}"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.js"></script>
     {% else %}
-        <script src="{% static 'js/proprietario.js' %}"></script>
+        <script src="{% static 'js/administrador.js' %}"></script>
     {% endif %}
 {% endblock script %}
