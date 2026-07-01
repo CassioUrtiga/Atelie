@@ -1,5 +1,5 @@
 from django import forms
-from .models import Cliente
+from .models import Cliente, Pedido, Servico
 
 
 class CadastroCliente(forms.ModelForm):
@@ -60,4 +60,24 @@ class CadastroCliente(forms.ModelForm):
             'placeholder': '(xx) x-xxxxx-xxxx',
         })
     )
-        
+
+class CadastroPedido(forms.ModelForm):
+
+    servico = forms.ModelMultipleChoiceField(
+        queryset=Servico.objects.all(),
+        widget=forms.CheckboxSelectMultiple(),
+        label="Serviços",
+    )
+    
+    class Meta:
+        model = Pedido
+        fields = ['servico', 'roupa', 'tecido', 'data_conclusao', 'detalhes']
+    
+        widgets = {
+            'data_conclusao': forms.DateTimeInput(
+                attrs={'type': 'datetime-local', 'class': 'form-control'}
+            ),
+            'detalhes': forms.Textarea(attrs={'rows': 3, 'class': 'form-control', 'placeholder': 'Detalhes do pedido...'}),
+            'roupa': forms.Select(attrs={'class': 'form-control'}),
+            'tecido': forms.Select(attrs={'class': 'form-control'}),
+        }

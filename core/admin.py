@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Cliente, Proprietario
+from .models import Cliente, Administrador
 
 # Register your models here.
 @admin.register(Cliente)
@@ -11,8 +11,8 @@ class ClienteModelAdmin(admin.ModelAdmin):
     
     username.short_description = 'Username'
 
-@admin.register(Proprietario)
-class ProprietarioModelAdmin(admin.ModelAdmin):
+@admin.register(Administrador)
+class AdministradorModelAdmin(admin.ModelAdmin):
     list_display = ('username', 'nome', 'telefone')
 
     def username(self, obj):
