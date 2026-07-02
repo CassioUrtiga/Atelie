@@ -57,7 +57,7 @@ class CadastroCliente(forms.ModelForm):
         widget=forms.TextInput(attrs={
             'id': 'telefone',
             'class': 'form-control',
-            'placeholder': '(xx) x-xxxxx-xxxx',
+            'placeholder': '(00) 00000-0000',
         })
     )
 

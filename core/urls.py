@@ -2,7 +2,7 @@ from django.urls import path
 
 from .views import (
     inicial_view, dashboard_view, cadastrar_usuario_view, login_view, 
-    logout_view, cadastrar_pedido_view
+    logout_view, cadastrar_pedido_view, excluir_pedido_view
 )
 
 urlpatterns = [
@@ -12,4 +12,5 @@ urlpatterns = [
     path('cadastrar/', cadastrar_usuario_view, name= 'cadastrar'),
     path('dashboard/', dashboard_view, name='dashboard'),
     path('pedido/', cadastrar_pedido_view, name='pedido'),
+    path('excluir-pedido/<int:id>/', excluir_pedido_view, name='excluir-pedido'),
 ]
