@@ -49,6 +49,7 @@ def logout_view(request):
 def cadastrar_usuario_view(request):
     if request.method == "POST":
         form_cliente = CadastroCliente(request.POST)
+        
         if form_cliente.is_valid():
             username = form_cliente.data['username']
             senha = form_cliente.data['senha']
@@ -86,10 +87,22 @@ def dashboard_view(request):
     is_cliente = hasattr(request.user, 'cliente')
 
     if is_cliente:
+        nome_completo = request.user.cliente.nome.lower()
+
+        # Lista de conectores comuns que não devem contar como sobrenome
+        conectores = ['de', 'da', 'do', 'das', 'dos', 'e']
+        partes = nome_completo.split()
+
+        if len(partes) > 2 and partes[1].lower() in conectores:
+            nome_resumido = " ".join(partes[:3])
+        else:
+            nome_resumido = " ".join(partes[:2])
+
         context = {
             'isCliente': is_cliente,
-            'nome': request.user.cliente.nome,
+            'nome': nome_resumido,
             'telefone': request.user.cliente.telefone,
+            'sexo': request.user.cliente.sexo,
             'qtde_servico': Servico.objects.count(),
             'form': CadastroPedido(),
             'pedidos': Pedido.objects.filter(cliente=request.user.cliente)
@@ -133,16 +146,26 @@ def cadastrar_pedido_view(request):
                 
                 pedido.img.add(nova_imagem_objeto)
         except Exception as e:
-            messages.error(request, 'ERRO! ao processar a imagem.')
+            messages.error(request, 'Problema no envio da imagem!')
             return redirect('dashboard')
         
         form_pedido.save_m2m()
         
-        messages.success(request, 'Pedido realizado com sucesso!')
+        messages.success(request, 'Novo pedido realizado!')
         return redirect('dashboard')
     else:
-        messages.error(request, 'ERRO! dados inválidos ou incompletos')
+        messages.error(request, 'Dados inválidos ou incompletos!')
         return redirect('dashboard')    
+
+@login_required(login_url='login')
+def excluir_pedido_view(request, id):
+    cliente = request.user.cliente
+
+    pedido = get_object_or_404(Pedido, id=id, cliente=cliente)
+    pedido.delete()
+
+    messages.success(request, 'Pedido excluído!')
+    return redirect('dashboard')
 
 
 def decode_base64_image(base64_string):

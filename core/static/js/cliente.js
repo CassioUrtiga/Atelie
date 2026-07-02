@@ -1,3 +1,4 @@
+// Formulário adicionar pedido com imagem
 var instancesCroppie = {};
 var idImg = 0;
 
