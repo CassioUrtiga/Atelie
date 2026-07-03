@@ -5,6 +5,7 @@ import tempfile
 from functools import reduce
 from io import BytesIO
 from datetime import datetime, date, timedelta
+from PIL import Image
 
 from django.http import HttpResponseNotFound
 from django.contrib import messages
@@ -14,7 +15,6 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.files.base import ContentFile
-from PIL import Image
 
 from .forms import CadastroCliente, CadastroPedido
 from .models import Cliente, Administrador, Servico, Pedido, ImagemPedido
@@ -126,36 +126,62 @@ def cadastrar_pedido_view(request):
         pedido.save()
 
         # Salva as imagens
-        imagens_lista = request.POST.getlist('image')
+        imagens_invalidas = 0
+        total_imagens = 0
 
         try:
+            imagens_lista = request.FILES.getlist('image')
             for index, imagem in enumerate(imagens_lista):
-                if not imagem:
-                    continue
+                total_imagens += 1
+                try:
+                    # Validação de tamanho: 1MB = 1024 * 1024 bytes
+                    if imagem.size > 1048576:
+                        imagens_invalidas += 1
+                        continue
+
+                    with Image.open(imagem) as img_teste:
+                        img_teste.verify()
                     
-                imagem_decodificada = decode_base64_image(imagem)
+                    nova_imagem_objeto = ImagemPedido()
+                    nova_imagem_objeto.img.save(imagem.name, imagem)
                 
-                with tempfile.NamedTemporaryFile(suffix='.jpeg', delete=False) as temp_file:
-                    imagem_decodificada.save(temp_file, format='JPEG')
-                    temp_file.seek(0)
-                    file_content = temp_file.read()
-                
-                content_file = ContentFile(file_content)
-                nova_imagem_objeto = ImagemPedido()
-                nova_imagem_objeto.img.save(temp_file.name, content_file)
-                
-                pedido.img.add(nova_imagem_objeto)
+                    pedido.img.add(nova_imagem_objeto)
+                except Exception:
+                    imagens_invalidas += 1
         except Exception as e:
             messages.error(request, 'Problema no envio da imagem!')
             return redirect('dashboard')
         
-        form_pedido.save_m2m()
+        # Cenário A: Todas as imagens enviadas eram inválidas
+        if total_imagens == imagens_invalidas > 0:
+            if imagens_invalidas == 1:
+                msg = "Pedido realizado, mas a imagem enviada era inválida!"
+            else:
+                msg = "Pedido realizado, mas as imagens enviadas eram inválidas!"
+
+            messages.info(request, msg)
+            return redirect('dashboard')
+        
+        # Cenário B: Teve mistura (algumas válidas, algumas inválidas)
+        if imagens_invalidas > 0:
+            form_pedido.save_m2m()
+            imagens_validas = total_imagens - imagens_invalidas
+
+            msg_validas = pluralizar(imagens_validas, "imagem aceita", "imagens aceitas")
+            msg_invalidas = pluralizar(imagens_invalidas, "inválida", "inválidas")
+
+            messages.info(request, f'Pedido realizado! {msg_validas} e {msg_invalidas}.')
+            return redirect('dashboard')
+        
+        # Cenário C: 100% de sucesso (todas válidas)
+        if imagens_invalidas == 0:
+            form_pedido.save_m2m()
         
         messages.success(request, 'Novo pedido realizado!')
         return redirect('dashboard')
     else:
         messages.error(request, 'Dados inválidos ou incompletos!')
-        return redirect('dashboard')    
+        return redirect('dashboard')
 
 @login_required(login_url='login')
 def excluir_pedido_view(request, id):
@@ -167,9 +193,10 @@ def excluir_pedido_view(request, id):
     messages.success(request, 'Pedido excluído!')
     return redirect('dashboard')
 
+@login_required(login_url='login')
+def album_view(request, id):
+    return redirect('album')
 
-def decode_base64_image(base64_string):
-    encoded_data = base64_string.split(',')[1]
-    image_data = base64.b64decode(encoded_data)
-    image = Image.open(BytesIO(image_data))
-    return image
+def pluralizar(quantidade, singular, plural):
+    return f"{quantidade} {singular}" if quantidade == 1 else f"{quantidade} {plural}"
+
