@@ -14,7 +14,7 @@ class Cliente(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     nome = models.CharField(max_length=100, null=False)
     sexo = models.CharField(max_length=1, choices=[('F', "Feminino"), ('M', "Masculino")], default='F')
-    telefone = models.CharField(max_length=20, default="(00) 00000-0000")
+    telefone = models.CharField(max_length=15, blank=False)
 
     class Meta:
         verbose_name = "cliente"
@@ -26,7 +26,7 @@ class Cliente(models.Model):
 class Administrador(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     nome = models.CharField(max_length=100, null=False)
-    telefone = models.CharField(max_length=20, default="(00) 00000-0000")
+    telefone = models.CharField(max_length=15, blank=False)
 
     class Meta:
         verbose_name = "administrador"
@@ -95,8 +95,8 @@ class Pedido(models.Model):
     data_pedido = models.DateTimeField(auto_now_add=True)
     data_conclusao = models.DateTimeField()
     detalhes = models.TextField(blank=True, null=True)
-    observacao = models.TextField(blank=True, null=True, default="Nenhuma observação")
-    preco = models.CharField(max_length=15, default="A definir")
+    observacao = models.TextField(blank=True, null=True, default="")
+    preco = models.CharField(max_length=10, default="")
     status = models.IntegerField(choices=STATUS_CHOICES, default=RECEBIDO)
     img = models.ManyToManyField(ImagemPedido)
     

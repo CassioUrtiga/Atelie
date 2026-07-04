@@ -54,7 +54,7 @@ class CadastroCliente(forms.ModelForm):
     telefone = forms.CharField(
         required=True,
         max_length=15,
-        min_length=15,
+        min_length=14,
         widget=forms.TextInput(attrs={
             'id': 'telefone',
             'class': 'form-control',
@@ -77,7 +77,7 @@ class CadastroPedido(forms.ModelForm):
         widgets = {
             'data_conclusao': forms.DateTimeInput(attrs={
                 'type': 'datetime-local', 
-                'class': 'form-control'
+                'class': 'form-control w-auto'
             }),
             'detalhes': forms.Textarea(attrs={
                 'rows': 3, 
