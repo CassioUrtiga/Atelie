@@ -54,7 +54,6 @@ def cadastrar_usuario_view(request):
             username = form_cliente.data['username']
             senha = form_cliente.data['senha']
             
-            # Realiza o cadastro do cliente 
             if User.objects.filter(username=username).exists():
 
                 messages.warning(request, f'Usuário {username} já existe!')
@@ -195,7 +194,10 @@ def excluir_pedido_view(request, id):
 
 @login_required(login_url='login')
 def album_view(request, id):
-    return redirect('album')
+    cliente = request.user.cliente
+    pedido = get_object_or_404(Pedido, id=id, cliente=cliente)
+
+    return render(request, 'album.html', {'fotos': pedido.img.all})
 
 def pluralizar(quantidade, singular, plural):
     return f"{quantidade} {singular}" if quantidade == 1 else f"{quantidade} {plural}"
