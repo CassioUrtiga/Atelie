@@ -365,31 +365,32 @@
                             data-bs-toggle="collapse" 
                             data-bs-target="#collapse{{ grupo.grouper }}" 
                             aria-expanded="{% if grupo.grouper == 2 %}true{% else %}false{% endif %}" 
-                            aria-controls="collapse{{ grupo.grouper }}">
-                            
-                            {% if grupo.grouper == 1 %}
-                                Pedidos Recebidos 
-                            {% elif grupo.grouper == 2 %}
-                                Pedidos em Andamento
-                            {% elif grupo.grouper == 3 %}
-                                Pedidos Concluídos
-                            {% elif grupo.grouper == 4 %}
-                                Pedidos Cancelados
-                            {% elif grupo.grouper == 11 %}
-                                Pedidos Pagos
-                            {% else %}
-                                Outros Pedidos
-                            {% endif %}
-                            
-                            <span class="badge bg-secondary ms-2">{{ grupo.list|length }}</span>
+                            aria-controls="collapse{{ grupo.grouper }}"
+                            style="display: flex; align-items: center; width: 100%;">
+                            <div class="d-flex align-items-center justify-content-between w-100 me-3">
+                                <span>
+                                    {% if grupo.grouper == 1 %}
+                                        Pedidos Recebidos 
+                                    {% elif grupo.grouper == 2 %}
+                                        Pedidos em Andamento
+                                    {% elif grupo.grouper == 3 %}
+                                        Pedidos Concluídos
+                                    {% elif grupo.grouper == 4 %}
+                                        Pedidos Cancelados
+                                    {% elif grupo.grouper == 11 %}
+                                        Pedidos Pagos
+                                    {% else %}
+                                        Outros Pedidos
+                                    {% endif %}
+                                </span>
+                                <span class="badge bg-secondary">{{ grupo.list|length }}</span>
+                            </div>
                         </button>
                     </h2>
-
                     <div id="collapse{{ grupo.grouper }}" 
                         class="accordion-collapse collapse {% if grupo.grouper == 2 %}show{% endif %}" 
                         aria-labelledby="heading{{ grupo.grouper }}" 
                         data-bs-parent="#accordionPedidos">
-                        
                         <div class="accordion-body">
                             <div class="card-pedido d-flex flex-wrap">
                                 {% for pedido in grupo.list %}
@@ -486,7 +487,6 @@
                                                     <span class="text-uppercase small tracking-wider fw-bold text-secondary" style="font-size: 0.75rem; letter-spacing: 0.5px;">
                                                         Observações
                                                     </span>
-                                                    
                                                     {% if pedido.observacao %}
                                                         <div class="d-flex align-items-center gap-1.5 mt-1">
                                                             <span class="badge rounded-pill fw-semibold text-dark px-3 py-1.5" 
