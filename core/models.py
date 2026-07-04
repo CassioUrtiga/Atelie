@@ -91,7 +91,7 @@ class Pedido(models.Model):
     detalhes = models.TextField(blank=True, null=True)
     observacao = models.TextField(blank=True, null=True, default="")
     preco = models.CharField(max_length=10, default="")
-    status = models.SmallIntegerField()
+    status = models.SmallIntegerField(default=1)
     img = models.ManyToManyField(ImagemPedido)
     
     class Meta:
