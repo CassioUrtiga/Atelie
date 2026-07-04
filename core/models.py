@@ -76,17 +76,11 @@ class Roupa(models.Model):
         return self.roupa
 
 class Pedido(models.Model):
-    RECEBIDO = 1
-    EM_ANDAMENTO = 2
-    CONCLUIDO = 3
-    CANCELADO = 4
-
-    STATUS_CHOICES = [
-        (RECEBIDO, "Recebido"),
-        (EM_ANDAMENTO, "Em Andamento"),
-        (CONCLUIDO, "Concluído"),
-        (CANCELADO, "Cancelado"),
-    ]
+    # Status Recebido  = 1
+    # Status Andamento = 2
+    # Status Concluído = 3
+    # Status Cancelado = 4
+    # Status Pago      = 11
     
     cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
     servico = models.ManyToManyField(Servico)
@@ -97,7 +91,7 @@ class Pedido(models.Model):
     detalhes = models.TextField(blank=True, null=True)
     observacao = models.TextField(blank=True, null=True, default="")
     preco = models.CharField(max_length=10, default="")
-    status = models.IntegerField(choices=STATUS_CHOICES, default=RECEBIDO)
+    status = models.SmallIntegerField()
     img = models.ManyToManyField(ImagemPedido)
     
     class Meta:

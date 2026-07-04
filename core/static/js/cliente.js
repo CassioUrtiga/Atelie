@@ -22,7 +22,7 @@ btAddImg.on('click', function() {
                 </div>
                 
                 <div class="col-auto">
-                    <button type="button" class="btn btn-outline-danger d-flex align-items-center gap-1" onclick="remover_imagem(${idImg})" title="Remover Imagem">
+                    <button type="button" class="btn btn-outline-danger d-flex align-items-center gap-1" onclick="$('#bloco-imagem-${idImg}').remove()" title="Remover Imagem">
                         <span class="d-none d-sm-inline">Remover</span>
                     </button>
                 </div>
@@ -78,6 +78,26 @@ novaImagem.on('change', '.form-control[type="file"]', function() {
     }
 });
 
-function remover_imagem(id) {
-    $(`#bloco-imagem-${id}`).remove();
-}
+// Lógica de desmarcar checkbox (filtro de pedidos)
+document.addEventListener("DOMContentLoaded", function() {
+    const checkTodos = document.getElementById('checkTodos');
+    const outrosFiltros = document.querySelectorAll('input[name="status_filtros"]:not(#checkTodos)');
+
+    // Cenário 1: Se o usuário clicar em "Todos", desmarca todos os outros
+    checkTodos.addEventListener('change', function() {
+        if (this.checked) {
+            outrosFiltros.forEach(checkbox => {
+                checkbox.checked = false;
+            });
+        }
+    });
+
+    // Cenário 2: Se o usuário marcar qualquer outro filtro, desmarca o "Todos"
+    outrosFiltros.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            if (this.checked) {
+                checkTodos.checked = false;
+            }
+        });
+    });
+});
