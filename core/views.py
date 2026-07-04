@@ -82,15 +82,41 @@ def cadastrar_usuario_view(request):
 
 @login_required(login_url='login')
 def dashboard_view(request):
-
     is_cliente = hasattr(request.user, 'cliente')
 
     if is_cliente:
         nome_completo = request.user.cliente.nome.lower()
+        pedidos = Pedido.objects.filter(cliente=request.user.cliente)
+        pedidos_filtrados = {'isEmpty': True, 'dados': ''}
 
-        # Lista de conectores comuns que não devem contar como sobrenome
-        conectores = ['de', 'da', 'do', 'das', 'dos', 'e']
+        # Filtro de pedidos
+        if request.method == "POST":
+            filtro_pedidos = [int(valor) for valor in request.POST.getlist('status_filtros')]
+            
+            if filtro_pedidos:
+                request.session['filtros_pedidos'] = filtro_pedidos
+            else:
+                request.session.pop('filtros_pedidos', None)
+            
+            return redirect('dashboard')
+    
+        filtros_salvos = request.session.get('filtros_pedidos')
+        
+        if filtros_salvos and (10 not in filtros_salvos):
+            pedidos_filtrados['isEmpty'] = False
+            pedidos_filtrados['dados'] = Pedido.objects.filter(
+                cliente=request.user.cliente, 
+                status__in=filtros_salvos
+            )
+        else:
+            # Marcar o checkbox (todos)
+            filtros_salvos = [10]
+            request.session['filtros_pedidos'] = [10]
+            pedidos_filtrados['isEmpty'] = True
+        
+        # Formatação do nome
         partes = nome_completo.split()
+        conectores = ['de', 'da', 'do', 'das', 'dos', 'e']
 
         if len(partes) > 2 and partes[1].lower() in conectores:
             nome_resumido = " ".join(partes[:3])
@@ -104,7 +130,8 @@ def dashboard_view(request):
             'sexo': request.user.cliente.sexo,
             'qtde_servico': Servico.objects.count(),
             'form': CadastroPedido(),
-            'pedidos': Pedido.objects.filter(cliente=request.user.cliente)
+            'pedidos': pedidos if pedidos_filtrados['isEmpty'] else pedidos_filtrados['dados'],
+            'filtros_salvos': filtros_salvos,
         }
     else:
         context = {
@@ -193,11 +220,12 @@ def excluir_pedido_view(request, id):
     return redirect('dashboard')
 
 @login_required(login_url='login')
-def album_view(request, id):
+def album_pedido_view(request, id):
     cliente = request.user.cliente
     pedido = get_object_or_404(Pedido, id=id, cliente=cliente)
 
     return render(request, 'album.html', {'fotos': pedido.img.all})
+
 
 def pluralizar(quantidade, singular, plural):
     return f"{quantidade} {singular}" if quantidade == 1 else f"{quantidade} {plural}"
