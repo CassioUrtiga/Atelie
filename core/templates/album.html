@@ -1,10 +1,55 @@
 {% extends './base.html' %}
 {% load static %}
 
+{% block css %}
+    <link rel="stylesheet" href="https://unpkg.com/photoswipe/dist/photoswipe.css">
+    <link rel="stylesheet" href="{% static 'css/album.css' %}">
+{% endblock css %}
+
 {% block title %}
     <title>Álbum</title>
 {% endblock title %}
 
 {% block content %}
-    <h1>Album de fotos</h1>
+    
+    <header class="album-header {% if sexo == 'F' %}header-f{% else %}header-m{% endif %}">
+        <h1 class="h3 mb-0 fw-bold text-uppercase tracking-wider">
+            Álbum de {{ nome }} 
+            <span class="d-block fs-6 fw-normal text-muted text-none low-case mt-1">Pedido nº {{ pedido_id }}</span>
+        </h1>
+    </header>
+    <div class="galeria" id="my-gallery">
+        {% for imagem in fotos %}
+            <a href="{{ imagem.img.url }}" 
+            data-pswp-width="{{ imagem.img.width }}" 
+            data-pswp-height="{{ imagem.img.height }}"
+            target="_blank"
+            draggable="false"
+            class="galeria-item foto-container" id="container-{{ imagem.id }}"
+            >
+                <img 
+                    src="{{ imagem.img.url }}" 
+                    class="galeria-img" 
+                    alt="Imagem do pedido {{ pedido.id }}" 
+                    draggable="false"
+                    oncontextmenu="return false;"
+                >
+                <div class="cantoneira-inferior"></div>
+            </a>
+        {% endfor %}
+    </div>
 {% endblock content %}
+
+{% block script %}
+    <script type="module">
+        import PhotoSwipeLightbox from 'https://unpkg.com/photoswipe/dist/photoswipe-lightbox.esm.js';
+
+        const lightbox = new PhotoSwipeLightbox({
+            gallery: '#my-gallery',
+            children: 'a',
+            pswpModule: () => import('https://unpkg.com/photoswipe/dist/photoswipe.esm.js')
+        });
+        
+        lightbox.init();
+    </script>
+{% endblock script %}

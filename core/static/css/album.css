@@ -1,0 +1,159 @@
+body {
+    min-height: 100dvh; 
+    border: 10px solid transparent;
+    margin: 0;
+    padding-left: 60px;
+    background-color: #FAFAF7;
+    position: relative;
+    box-sizing: border-box;
+}
+
+body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 45px;
+    width: 2px;
+    background-color: #444444;
+    z-index: 1;
+}
+
+body::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 15px;
+    width: 12px;
+    background-image: radial-gradient(circle, #222 40%, transparent 50%), 
+                      radial-gradient(circle, #fff 50%, transparent 60%);
+    background-size: 12px 30px;
+    background-position: 0 0, 0 1px;
+    z-index: 2;
+    opacity: 0.8;
+}
+
+/* Cabeçalho Estilo Álbum Vintage */
+header.album-header {
+    text-align: center;
+    margin-bottom: 50px;
+    position: relative;
+    padding: 15px;
+}
+
+.header-f{
+    background-image: linear-gradient(#FBD9E1, #FAFAF7);
+}
+
+.header-m{
+    background-image: linear-gradient(#CFE8F8, #FAFAF7);
+}
+
+/* Moldura ornamental fina ao redor do título */
+header.album-header::border-span { 
+    content: "";
+}
+header.album-header h1 {
+    font-size: 1.6rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    color: #4a3b32;
+    margin: 0;
+    display: inline-block;
+    border-top: 1px solid #c5b9a5;
+    border-bottom: 1px solid #c5b9a5;
+    padding: 15px 40px;
+    position: relative;
+}
+
+/* Pequenos losangos decorativos nas pontas do título */
+header.album-header h1::before, 
+header.album-header h1::after {
+    content: "✦";
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #a89984;
+    font-size: 0.8rem;
+}
+header.album-header h1::before { left: 15px; }
+header.album-header h1::after { right: 15px; }
+
+
+/* CONTAINER DA FOTO COM CANTONEIRAS */
+.foto-container {
+    position: relative;
+    background: #fff;
+    padding: 15px 15px 15px 15px; 
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    max-width: 300px;
+    transition: transform 0.3s ease;
+}
+
+/* Rotação leve e alternada */
+.foto-container:nth-child(odd) { transform: rotate(-2deg); }
+.foto-container:nth-child(even) { transform: rotate(1.5deg); }
+.foto-container:hover { transform: rotate(0deg) scale(1.03); z-index: 10; }
+
+/* AS CANTONEIRAS (Efeito fotográfico vintage) */
+.foto-container::before, .foto-container::after,
+.cantoneira-inferior::before, .cantoneira-inferior::after {
+    content: "";
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background-color: #222;
+    z-index: 5;
+    box-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+}
+
+/* Superior Esquerda */
+.foto-container::before {
+    top: -2px; left: -2px;
+    clip-path: polygon(0 0, 100% 0, 0 100%);
+}
+/* Superior Direita */
+.foto-container::after {
+    top: -2px; right: -2px;
+    clip-path: polygon(0 0, 100% 0, 100% 100%);
+}
+
+/* Auxiliar para as cantoneiras de baixo */
+.cantoneira-inferior::before {
+    bottom: -2px; left: -2px;
+    clip-path: polygon(0 0, 0 100%, 100% 100%);
+}
+.cantoneira-inferior::after {
+    bottom: -2px; right: -2px;
+    clip-path: polygon(100% 0, 0 100%, 100% 100%);
+}
+
+/* Layout da galeria das imagens */
+.galeria {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 1.25rem;
+    width: 100%;
+}
+.galeria-item {
+    width: 100%;
+    touch-action: none;
+    box-sizing: border-box;
+    border-radius: 8px;
+    overflow: hidden;
+}
+.galeria-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    -webkit-user-drag: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}

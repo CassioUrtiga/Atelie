@@ -224,7 +224,14 @@ def album_pedido_view(request, id):
     cliente = request.user.cliente
     pedido = get_object_or_404(Pedido, id=id, cliente=cliente)
 
-    return render(request, 'album.html', {'fotos': pedido.img.all})
+    context = {
+        'nome': cliente.nome.split()[0],
+        'sexo': cliente.sexo,
+        'pedido_id': id,
+        'fotos': pedido.img.all,
+    }
+
+    return render(request, 'album.html', context)
 
 
 def pluralizar(quantidade, singular, plural):
