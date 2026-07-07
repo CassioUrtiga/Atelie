@@ -78,25 +78,25 @@ novaImagem.on('change', '.form-control[type="file"]', function() {
     }
 });
 
-// Lógica de desmarcar checkbox (filtro de pedidos)
+// Lógica de desmarcar checkbox (filtros)
 document.addEventListener("DOMContentLoaded", function() {
-    const checkTodos = document.getElementById('checkTodos');
-    const outrosFiltros = document.querySelectorAll('input[name="status_filtros"]:not(#checkTodos)');
+    const checkTodosPedidos = document.getElementById('checkTodosPedidos');
+    const outrosFiltrosPedidos = document.querySelectorAll('input[name="status_filtro_pedidos"]:not(#checkTodosPedidos)');
 
     // Cenário 1: Se o usuário clicar em "Todos", desmarca todos os outros
-    checkTodos.addEventListener('change', function() {
+    checkTodosPedidos.addEventListener('change', function() {
         if (this.checked) {
-            outrosFiltros.forEach(checkbox => {
+            outrosFiltrosPedidos.forEach(checkbox => {
                 checkbox.checked = false;
             });
         }
     });
 
     // Cenário 2: Se o usuário marcar qualquer outro filtro, desmarca o "Todos"
-    outrosFiltros.forEach(checkbox => {
+    outrosFiltrosPedidos.forEach(checkbox => {
         checkbox.addEventListener('change', function() {
             if (this.checked) {
-                checkTodos.checked = false;
+                checkTodosPedidos.checked = false;
             }
         });
     });

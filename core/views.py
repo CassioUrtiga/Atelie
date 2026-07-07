@@ -12,7 +12,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
-from django.db.models import Q
+from django.db.models import Case, Value, When
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.files.base import ContentFile
 
@@ -83,45 +83,50 @@ def cadastrar_usuario_view(request):
 @login_required(login_url='login')
 def dashboard_view(request):
     is_cliente = hasattr(request.user, 'cliente')
+    pedidos_filtrados = {'isEmpty': True, 'dados': ''}
+    clientes_filtrados = {'isEmpty': True, 'dados': ''}
 
     if is_cliente:
-        nome_completo = request.user.cliente.nome.lower()
-        pedidos = Pedido.objects.filter(cliente=request.user.cliente)
-        pedidos_filtrados = {'isEmpty': True, 'dados': ''}
-
-        # Filtro de pedidos
+        # Filtros
         if request.method == "POST":
-            filtro_pedidos = [int(valor) for valor in request.POST.getlist('status_filtros')]
-            
-            if filtro_pedidos:
-                request.session['filtros_pedidos'] = filtro_pedidos
-            else:
-                request.session.pop('filtros_pedidos', None)
+            if "filtrar_pedidos" in request.POST:
+                filtro_pedidos = request.POST.getlist('status_filtro_pedidos')
+                
+                if filtro_pedidos:
+                    request.session['filtros_pedidos'] = filtro_pedidos
+                else:
+                    request.session.pop('filtros_pedidos', None)
             
             return redirect('dashboard')
-    
-        filtros_salvos = request.session.get('filtros_pedidos')
-        
-        if filtros_salvos and (10 not in filtros_salvos):
-            pedidos_filtrados['isEmpty'] = False
-            pedidos_filtrados['dados'] = Pedido.objects.filter(
-                cliente=request.user.cliente, 
-                status__in=filtros_salvos
-            )
         else:
-            # Marcar o checkbox (todos)
-            filtros_salvos = [10]
-            request.session['filtros_pedidos'] = [10]
-            pedidos_filtrados['isEmpty'] = True
+            filtros_pedidos_salvos = request.session.get('filtros_pedidos')
+            
+            # lógica de filtro de pedidos
+            if filtros_pedidos_salvos and ('todos' not in filtros_pedidos_salvos):
+                pedidos_filtrados['isEmpty'] = False
+                pedidos_filtrados['dados'] = Pedido.objects.filter(
+                    cliente=request.user.cliente, 
+                    status__in=filtros_pedidos_salvos
+                )
+            else:
+                filtros_pedidos_salvos = ['todos']
+                request.session['filtros_pedidos'] = ['todos']
+                pedidos_filtrados['isEmpty'] = True
         
         # Formatação do nome
-        partes = nome_completo.split()
+        partes = request.user.cliente.nome.lower().split()
         conectores = ['de', 'da', 'do', 'das', 'dos', 'e']
 
         if len(partes) > 2 and partes[1].lower() in conectores:
             nome_resumido = " ".join(partes[:3])
         else:
             nome_resumido = " ".join(partes[:2])
+
+        # Base de pedidos (filtrados ou todos)
+        if pedidos_filtrados['isEmpty']:
+            pedidos_base = Pedido.objects.filter(cliente=request.user.cliente)
+        else:
+            pedidos_base = pedidos_filtrados['dados']
 
         context = {
             'isCliente': is_cliente,
@@ -130,14 +135,88 @@ def dashboard_view(request):
             'sexo': request.user.cliente.sexo,
             'qtde_servico': Servico.objects.count(),
             'form': CadastroPedido(),
-            'pedidos': pedidos if pedidos_filtrados['isEmpty'] else pedidos_filtrados['dados'],
-            'filtros_salvos': filtros_salvos,
+            'pedidos': pedidos_base.order_by(Case(
+                When(status='andamento', then=Value(1)),
+                When(status='recebido', then=Value(2)),
+                When(status='pago', then=Value(3)),
+                When(status='concluido', then=Value(4)),
+                When(status='cancelado', then=Value(5)),
+                default=Value(6)
+            )),
+            'filtros_pedidos': filtros_pedidos_salvos,
         }
     else:
+        # Filtros
+        if request.method == "POST":
+            if "filtrar_pedidos" in request.POST:
+                filtro_pedidos = request.POST.getlist('status_filtro_pedidos')
+                
+                if filtro_pedidos:
+                    request.session['filtros_pedidos'] = filtro_pedidos
+                else:
+                    request.session.pop('filtros_pedidos', None)
+            
+            if "filtrar_clientes" in request.POST:
+                filtro_clientes = request.POST.getlist('status_filtro_clientes')
+                
+                if filtro_clientes:
+                    request.session['filtros_clientes'] = filtro_clientes
+                else:
+                    request.session.pop('filtros_clientes', None)
+            
+            return redirect('dashboard')
+        else:
+            filtros_pedidos_salvos = request.session.get('filtros_pedidos')
+            filtros_clientes_salvos = request.session.get('filtros_clientes')
+            
+            # lógica de filtro de pedidos
+            if filtros_pedidos_salvos and ('todos' not in filtros_pedidos_salvos):
+                pedidos_filtrados['isEmpty'] = False
+                pedidos_filtrados['dados'] = Pedido.objects.filter(
+                    status__in=filtros_pedidos_salvos
+                )
+            else:
+                filtros_pedidos_salvos = ['todos']
+                request.session['filtros_pedidos'] = ['todos']
+                pedidos_filtrados['isEmpty'] = True
+            
+            # lógica de filtro de clientes
+            if filtros_clientes_salvos and ('todos' not in filtros_clientes_salvos):
+                ids_inteiros = [int(id_str) for id_str in filtros_clientes_salvos]
+                clientes_filtrados['isEmpty'] = False
+                clientes_filtrados['dados'] = Cliente.objects.filter(
+                    id__in=ids_inteiros
+                )
+            else:
+                filtros_clientes_salvos = ['todos']
+                request.session['filtros_clientes'] = ['todos']
+                clientes_filtrados['isEmpty'] = True
+
+        # Base de pedidos (filtrados ou todos)
+        if pedidos_filtrados['isEmpty']:
+            pedidos_base = Pedido.objects.all()
+        else:
+            pedidos_base = pedidos_filtrados['dados']
+
+        # Se houver clientes filtrados, refina a base de pedidos
+        if not clientes_filtrados['isEmpty']:
+            pedidos_base = pedidos_base.filter(cliente__in=clientes_filtrados['dados'])
+
         context = {
             'isCliente': is_cliente,
             'nome': request.user.administrador.nome,
-            'telefone': request.user.administrador.telefone
+            'telefone': request.user.administrador.telefone,
+            'pedidos': pedidos_base.order_by(Case(
+                When(status='recebido', then=Value(1)),
+                When(status='andamento', then=Value(2)),
+                When(status='pago', then=Value(3)),
+                When(status='concluido', then=Value(4)),
+                When(status='cancelado', then=Value(5)),
+                default=Value(6)
+            )),
+            'clientes': Cliente.objects.all().order_by('nome'),
+            'filtros_pedidos': filtros_pedidos_salvos,
+            'filtros_clientes': filtros_clientes_salvos,
         }
     
     return render(request, 'dashboard.html', context)
@@ -151,7 +230,6 @@ def cadastrar_pedido_view(request):
         pedido.cliente = request.user.cliente
         pedido.save()
 
-        # Salva as imagens
         imagens_invalidas = 0
         total_imagens = 0
 
