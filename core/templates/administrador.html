@@ -1,139 +1,606 @@
+{% load static %}
+
 <header>
-    <div class="logo">
-        <abbr title="Página inicial">
-            <a href="{% url 'inicio' %}">
-                <h3>Voltar inicial</h3>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary" style="box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .075) !important;">
+        <div class="container-fluid">
+            <button 
+                type="button" 
+                class="btn btn-primary btn-lg d-inline-flex align-items-center gap-2" 
+                data-bs-toggle="modal" 
+                data-bs-target="#modalPedido"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+                </svg>
+                <span>Serviços</span>
+            </button>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation" style="margin-left: 20px;">
+            <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse position-absolute-md-none" id="navbarNavDropdown">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="{% url 'inicio' %}">Início</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a 
+                            class="nav-link dropdown-toggle {% if filtros_pedidos and 'todos' not in filtros_pedidos %} text-warning fw-bold {% endif %}" 
+                            href="#"
+                            role="button"
+                            data-bs-toggle="dropdown"
+                            data-bs-auto-close="outside"
+                            aria-expanded="false"
+                        >
+                            Filtrar pedidos
+                            {% if filtros_pedidos and 'todos' not in filtros_pedidos %}
+                                <span class="badge bg-warning text-dark rounded-pill ms-1" style="font-size: 0.75rem;">
+                                    {{ filtros_pedidos|length }}
+                                </span>
+                            {% endif %}
+                        </a>
+                        <form action="{% url 'dashboard' %}" id="formularioFiltrarPedidos" method="post" autocomplete="off"> 
+                            {% csrf_token %}
+                            <ul class="dropdown-menu p-3" style="min-width: 210px; max-height: 350px; overflow-y: auto;">
+                                <li>
+                                    <div class="form-check mb-2 d-flex justify-content-center align-items-center">
+                                        <input 
+                                            class="form-check-input me-2" type="checkbox" name="status_filtro_pedidos" 
+                                            value="todos" 
+                                            id="checkTodosPedidos" 
+                                            {% if 'todos' in filtros_pedidos %} checked {% endif %}
+                                        >
+                                        <label class="form-check-label m-0" for="checkTodosPedidos">
+                                            Todos
+                                        </label>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="form-check mb-2">
+                                        <input 
+                                            class="form-check-input" 
+                                            type="checkbox" 
+                                            name="status_filtro_pedidos" 
+                                            value="recebido" 
+                                            id="checkRecebidoPedidos" 
+                                            {% if 'recebido' in filtros_pedidos %} checked {% endif %}
+                                        >
+                                        <label class="form-check-label" for="checkRecebidoPedidos">
+                                            Pedidos recebidos
+                                        </label>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="form-check mb-2">
+                                        <input 
+                                            class="form-check-input" 
+                                            type="checkbox" name="status_filtro_pedidos" 
+                                            value="concluido" 
+                                            id="checkConcluidoPedidos" 
+                                            {% if 'concluido' in filtros_pedidos %} checked {% endif %}
+                                        >
+                                        <label class="form-check-label" for="checkConcluidoPedidos">
+                                            Pedidos concluídos
+                                        </label>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="form-check mb-2">
+                                        <input 
+                                            class="form-check-input" 
+                                            type="checkbox"  name="status_filtro_pedidos" 
+                                            value="andamento" 
+                                            id="checkAndamentoPedidos" 
+                                            {% if 'andamento' in filtros_pedidos %} checked {% endif %}
+                                        >
+                                        <label class="form-check-label" for="checkAndamentoPedidos">
+                                            Pedidos andamento
+                                        </label>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="form-check mb-2">
+                                        <input 
+                                            class="form-check-input" 
+                                            type="checkbox" name="status_filtro_pedidos" 
+                                            value="pago" 
+                                            id="checkPagoPedidos" 
+                                            {% if 'pago' in filtros_pedidos %} checked {% endif %}
+                                        >
+                                        <label class="form-check-label" for="checkPagoPedidos">
+                                            Pedidos pagos
+                                        </label>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="form-check mb-3"> 
+                                        <input 
+                                            class="form-check-input" 
+                                            type="checkbox" name="status_filtro_pedidos" 
+                                            value="cancelado" 
+                                            id="checkCanceladoPedidos" 
+                                            {% if 'cancelado' in filtros_pedidos %} checked {% endif %}
+                                        >
+                                        <label class="form-check-label" for="checkCanceladoPedidos">
+                                            Pedidos cancelados
+                                        </label>
+                                    </div>
+                                </li>
+                                <li>
+                                    <button type="submit" name="filtrar_pedidos" class="btn btn-outline-primary w-100">Aplicar</button>
+                                </li>
+                            </ul>
+                        </form>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a 
+                            class="nav-link dropdown-toggle {% if filtros_clientes and 'todos' not in filtros_clientes %} text-warning fw-bold {% endif %}"
+                            href="#"
+                            role="button"
+                            data-bs-toggle="dropdown"
+                            data-bs-auto-close="outside"
+                            aria-expanded="false"
+                        >
+                            Filtrar clientes
+                            {% if filtros_clientes and 'todos' not in filtros_clientes %}
+                                <span class="badge bg-warning text-dark rounded-pill ms-1" style="font-size: 0.75rem;">
+                                    {{ filtros_clientes|length }}
+                                </span>
+                            {% endif %}
+                        </a>
+                        <form action="{% url 'dashboard' %}" id="formularioFiltrarClientes" method="post" autocomplete="off"> 
+                            {% csrf_token %}
+                            <ul class="dropdown-menu p-3" style="min-width: 280px; max-height: 350px; overflow-y: auto;">
+                                <li>
+                                    <div class="form-check mb-2 d-flex justify-content-center align-items-center">
+                                        <input 
+                                            class="form-check-input me-2" type="checkbox" name="status_filtro_clientes" value="todos" 
+                                            id="checkTodosClientes" 
+                                            {% if 'todos' in filtros_clientes %} checked {% endif %}
+                                        >
+                                        <label class="form-check-label m-0" for="checkTodosClientes">
+                                            Todos
+                                        </label>
+                                    </div>
+                                </li>
+                                {% regroup clientes by nome|slice:":1"|upper as clientes_por_letra %}
+                                {% for grupo in clientes_por_letra %}
+                                    <div class="categoria-letra mb-3">
+                                        <h5 class="text-primary border-bottom pb-1 fw-bold">{{ grupo.grouper }}</h5>
+                                        <ul class="list-unstyled ps-2">
+                                            {% for cliente in grupo.list %}
+                                                <li>
+                                                    <div class="form-check mb-2">
+                                                        <input 
+                                                            class="form-check-input" 
+                                                            type="checkbox" 
+                                                            name="status_filtro_clientes" 
+                                                            value="{{ cliente.id }}" 
+                                                            id="check{{ cliente.id }}Clientes" 
+                                                            {% if cliente.id|stringformat:"s" in filtros_clientes %} checked {% endif %}
+                                                        >
+                                                        <label class="form-check-label" for="check{{ cliente.id }}Clientes">
+                                                            {{ cliente.nome|title }}
+                                                        </label>
+                                                    </div>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                {% endfor %}
+                                <li>
+                                    <button type="submit" name="filtrar_clientes" class="btn btn-outline-primary w-100">Aplicar</button>
+                                </li>
+                            </ul>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="card shadow-sm" style="max-width: 350px;">
+        <div class="card-body d-flex align-items-center gap-3" style="height: 70px;">
+            <div class="flex-grow-1">
+                <h5 class="card-title mb-1 text-dark fw-semibold">{{ nome|title }}</h5>
+                <p class="card-text mb-0 text-muted small">
+                    {{ telefone }}
+                </p>
+            </div>
+            <a href="{% url 'deslogar' %}">
+                <button type="button" class="btn btn-danger">Sair</button>
             </a>
-        </abbr>
+        </div>
     </div>
-    <h3>{{ telefone }}</h3>
-    <a href="{% url 'deslogar' %}">
-        <button type="button" class="btn btn-danger">Sair</button>
-    </a>
 </header>
 
-<div class="user-bar">
-    <div class="dados">
-        <h1>{{ nome|title }}</h1>
-        <p>(Administrador)</p>
-    </div>
-    <div class="accordion mt-2" style="padding: 7px;">
-        <div class="accordion-item">
-            <h2 class="accordion-header">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="false" aria-controls="panelsStayOpen-collapseOne">
-                Salões
-                </button>
-            </h2>
-            <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse">
-                <div class="accordion-body">
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop" id="addsalon">
-                    Adicionar
-                </button>
+<!-- Modal adicionar pedido -->
+<div class="modal fade" id="modalPedido" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Realizar Novo Pedido</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{% url 'pedido' %}" id="formularioPedido" method="post" enctype="multipart/form-data" autocomplete="off">
+                {% csrf_token %}
+                
+                <div class="modal-body p-4">
+                    <div class="mb-4 text-center p-3 border border-dashed rounded bg-light">
+                        <div id="novaImagem" class="mb-2"></div>
+                        <button type="button" class="btn btn-outline-primary btn-sm d-inline-flex align-items-center justify-content-center gap-2" id="addImg">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2"/>
+                            </svg>
+                            <span>Adicionar Imagem</span>
+                        </button>
+                    </div>
+                    <div class="row g-3">
+                        <div class="border border-secondary-subtle rounded-3 p-3 bg-light shadow-sm">
+                            <div class="form-label fw-semibold text-secondary">Escolha o serviço</div>
+                            {{ form.servico }}
+                        </div>
+                        <div class="d-flex flex-wrap justify-content-start align-items-center gap-3 border border-secondary-subtle rounded-3 p-3 bg-light shadow-sm">
+                            <div>
+                                <label class="form-label fw-semibold text-secondary">Roupa</label>
+                                {{ form.roupa }}
+                            </div>
+                            <div>
+                                <label class="form-label fw-semibold text-secondary">Tecido</label>
+                                {{ form.tecido }}
+                            </div>
+                        </div>
+                        <div class="col-12 border border-secondary-subtle rounded-3 p-3 bg-light shadow-sm">
+                            <label class="form-label fw-semibold text-secondary">Data de Entrega / Conclusão</label>
+                            {{ form.data_conclusao }}
+                        </div>
+                        <div class="col-12 border border-secondary-subtle rounded-3 p-3 bg-light shadow-sm">
+                            <label class="form-label fw-semibold text-secondary">Detalhes adicionais</label>
+                            {{ form.detalhes }}
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-        <div class="accordion-item">
-            <h2 class="accordion-header">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
-                Agendamentos
-            </button>
-            </h2>
-            <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse">
-            <div class="accordion-body">
-                <a href="">
-                    <button type="button" class="btn btn-primary">Visualizar todos</button>
-                </a>
-            </div>
-            </div>
-        </div>
-        <div class="accordion-item">
-            <h2 class="accordion-header">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree">
-                Relatórios
-            </button>
-            </h2>
-            <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse">
-            <div class="accordion-body">
-                <div>
-                    <button type="button" class="btn btn-warning" onclick="">Limpar Todo cache</button>
+                <div class="modal-footer bg-light border-top-0 d-flex w-100 gap-2 m-0 p-3">
+                    <button type="submit" class="btn btn-primary col">Enviar Pedido</button>
+                    <button type="button" class="btn btn-secondary col-auto px-4" data-bs-dismiss="modal">Cancelar</button>
                 </div>
-            </div>
-            </div>
-        </div>
-        <div class="accordion-item">
-            <h2 class="accordion-header">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFor" aria-expanded="false" aria-controls="panelsStayOpen-collapseFor">
-                Configurações
-                </button>
-            </h2>
-            <div id="panelsStayOpen-collapseFor" class="accordion-collapse collapse">
-                <div class="accordion-body">
-                <button type="button" class="btn btn-danger">
-                    Excluir conta
-                </button>
-                </div>
-            </div>
+            </form>
         </div>
     </div>
 </div>
 
-<main>
-    <div>
-        <div class="card text-white bg-primary mb-3" style="max-width: 18rem;">
-            <div class="card-header">Header</div>
-            <div class="card-body">
-                <h5 class="card-title">Primary card title</h5>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            </div>
-        </div>
-        <div class="card text-white bg-secondary mb-3" style="max-width: 18rem;">
-            <div class="card-header">Header</div>
-            <div class="card-body">
-                <h5 class="card-title">Secondary card title</h5>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            </div>
-        </div>
-        <div class="card text-white bg-success mb-3" style="max-width: 18rem;">
-            <div class="card-header">Header</div>
-            <div class="card-body">
-                <h5 class="card-title">Success card title</h5>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            </div>
-        </div>
-        <div class="card text-white bg-danger mb-3" style="max-width: 18rem;">
-            <div class="card-header">Header</div>
-            <div class="card-body">
-                <h5 class="card-title">Danger card title</h5>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            </div>
-        </div>
-        <div class="card text-white bg-warning mb-3" style="max-width: 18rem;">
-            <div class="card-header">Header</div>
-            <div class="card-body">
-                <h5 class="card-title">Warning card title</h5>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            </div>
-        </div>
-        <div class="card text-white bg-info mb-3" style="max-width: 18rem;">
-            <div class="card-header">Header</div>
-            <div class="card-body">
-                <h5 class="card-title">Info card title</h5>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            </div>
-        </div>
-        <div class="card bg-light mb-3" style="max-width: 18rem;">
-            <div class="card-header">Header</div>
-            <div class="card-body">
-                <h5 class="card-title">Light card title</h5>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            </div>
-        </div>
-        <div class="card text-white bg-dark mb-3" style="max-width: 18rem;">
-            <div class="card-header">Header</div>
-            <div class="card-body">
-                <h5 class="card-title">Dark card title</h5>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+{% for pedido in pedidos %}
+    <!-- Modal visualizar pedido -->
+    <div class="modal fade" id="modalVerPedido{{ pedido.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header d-flex align-items-start justify-content-between py-3 px-4 bg-light border-bottom">
+                    <div class="d-flex flex-column gap-1">
+                        <h5 class="modal-title fw-bold text-dark d-flex align-items-center gap-2" id="exampleModalLongTitle">
+                            <span class="text-secondary">Pedido</span> Nº {{ pedido.id }}
+                        </h5>
+                        <div class="d-flex flex-wrap gap-1 small">
+                            <span class="badge bg-secondary-subtle text-secondary-emphasis border border-secondary-subtle">
+                                {{ pedido.roupa.roupa }}
+                            </span>
+                            <span class="badge bg-light text-muted border">
+                                {{ pedido.tecido.tecido }}
+                            </span>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close ms-2 mt-1" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="card-text">
+                        <h5>
+                            Serviços:
+                            {% for s in pedido.servico.all %}
+                                <span class="badge bg-secondary-subtle text-secondary-emphasis border border-secondary-subtle px-3 py-2 rounded-pill fw-medium me-1 mb-1">
+                                    {{ s.servico }}
+                                </span>
+                            {% endfor %}
+                        </h5>
+                    </p>
+                    <p class="card-text">
+                        {{ pedido.detalhes }}
+                    </p>
+                    <p class="card-text">
+                        {% if pedido.observacao %}
+                            <fieldset disabled>
+                                <div class="form-group">
+                                    <textarea class="form-control" rows="3">{{ pedido.observacao }}</textarea>
+                                </div>
+                            </fieldset>
+                        {% else %}
+                            <p class="card-text">
+                                <span class="badge rounded-pill text-bg-dark text-wrap">{{ pedido.observacao }}</span>
+                            </p>
+                        {% endif %}
+                    </p>
+                </div>
+                <div class="modal-footer d-flex flex-wrap align-items-center gap-2 bg-light border-top py-3 px-4">
+                    <div class="text-secondary d-flex align-items-center gap-2 small fw-medium">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar-event text-primary" viewBox="0 0 16 16">
+                            <path d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5z"/>
+                            <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/>
+                        </svg>
+                        <span>
+                            Entrega / Conclusão: 
+                            <strong class="text-dark">
+                                {{ pedido.data_conclusao }}
+                            </strong>
+                        </span>
+                    </div>
+                    <button type="button" class="btn btn-secondary ms-auto" data-bs-dismiss="modal">Fechar</button>
+                </div>
             </div>
         </div>
     </div>
+
+    <!-- Modal excluir pedido -->
+    <div class="modal fade" id="excluirPedido{{ pedido.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">
+                        Excluir Pedido
+                    </h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Tem certeza que deseja excluir o <code>Pedido Nº{{ pedido.id }}</code>?
+                </div>
+                <div class="modal-footer d-flex w-100 gap-2">
+                    <button type="button" class="btn btn-secondary flex-fill" data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+                    
+                    <a href="{% url 'excluir-pedido' pedido.id %}" class="btn btn-danger flex-fill d-inline-flex align-items-center justify-content-center">
+                        Excluir
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+
+<main class="
+    {% if sexo == 'F' %}main-f{% else %}main-m{% endif %}
+    {% if not pedidos %}main-vazio{% endif %}
+    ">
+    {% for message in messages %}
+        {% if message.tags == 'error' %}
+            <div class="toast-container position-fixed bottom-0 end-0 p-3">
+                <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="toast-header text-bg-danger border-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle-fill me-2" viewBox="0 0 16 16">
+                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293z"/>
+                        </svg>
+                        <strong class="me-auto text-white">Erro</strong>
+                        <small class="text-white">Agora</small>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                    <div class="toast-body text-dark">
+                        {{ message }}
+                    </div>
+                </div>
+            </div>
+        {% elif message.tags == 'success' %}
+            <div class="toast-container position-fixed bottom-0 end-0 p-3">
+                <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="toast-header text-bg-success border-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle-fill me-2" viewBox="0 0 16 16">
+                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                        </svg>
+                        <strong class="me-auto text-white">Sucesso</strong>
+                        <small class="text-white">Agora</small>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                    <div class="toast-body text-dark">
+                        {{ message }}
+                    </div>
+                </div>
+            </div>
+        {% elif message.tags == 'warning' %}
+            <div class="toast-container position-fixed bottom-0 end-0 p-3">
+                <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="toast-header text-bg-warning border-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-exclamation-triangle-fill me-2" viewBox="0 0 16 16">
+                            <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
+                        </svg>
+                        <strong class="me-auto">Atenção</strong>
+                        <small>Agora</small>
+                        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                    <div class="toast-body text-dark">
+                        {{ message }}
+                    </div>
+                </div>
+            </div>
+        {% elif message.tags == 'info' %}
+            <div class="toast-container position-fixed bottom-0 end-0 p-3">
+                <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="toast-header text-bg-info border-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-info-circle-fill me-2" viewBox="0 0 16 16">
+                            <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2"/>
+                        </svg>
+                        <strong class="me-auto">Informação</strong>
+                        <small>Agora</small>
+                        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                    <div class="toast-body text-dark">
+                        {{ message }}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
+
+    {% if pedidos %}
+        <div class="accordion" id="accordionPedidos">
+            {% regroup pedidos by status as pedidos_agrupados %}
+            {% for grupo in pedidos_agrupados %}
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="heading{{ grupo.grouper }}">
+                        <button class="accordion-button {% if grupo.grouper != 'recebido' %}collapsed{% endif %}" 
+                            type="button" 
+                            data-bs-toggle="collapse" 
+                            data-bs-target="#collapse{{ grupo.grouper }}" 
+                            aria-expanded="{% if grupo.grouper == 'recebido' %}true{% else %}false{% endif %}" 
+                            aria-controls="collapse{{ grupo.grouper }}"
+                            style="display: flex; align-items: center; width: 100%;">
+                            <div class="d-flex align-items-center justify-content-between w-100 me-3">
+                                <span>
+                                    {% if grupo.grouper == 'recebido' %}
+                                        Pedidos Recebidos 
+                                    {% elif grupo.grouper == 'andamento' %}
+                                        Pedidos em Andamento
+                                    {% elif grupo.grouper == 'concluido' %}
+                                        Pedidos Concluídos
+                                    {% elif grupo.grouper == 'cancelado' %}
+                                        Pedidos Cancelados
+                                    {% elif grupo.grouper == 'pago' %}
+                                        Pedidos Pagos
+                                    {% else %}
+                                        Outros Pedidos
+                                    {% endif %}
+                                </span>
+                                <span class="badge bg-secondary">{{ grupo.list|length }}</span>
+                            </div>
+                        </button>
+                    </h2>
+                    <div id="collapse{{ grupo.grouper }}" 
+                        class="accordion-collapse collapse {% if grupo.grouper == 'recebido' %}show{% endif %}" 
+                        aria-labelledby="heading{{ grupo.grouper }}" 
+                        data-bs-parent="#accordionPedidos">
+                        <div class="accordion-body">
+                            <div class="card-pedido d-flex flex-wrap">
+                                {% for pedido in grupo.list %}
+                                    <div class="card mb-3">
+                                        <div class="card-header">
+                                            <h5 class="card-title mt-2 d-flex flex-column gap-1">
+                                                <span class="text-uppercase tracking-wider small text-muted font-monospace fw-bold">
+                                                    Pedido Nº{{ pedido.id }}
+                                                </span>
+                                                <span class="text-uppercase tracking-wider small text-muted font-monospace fw-bold">
+                                                    {{ pedido.cliente.nome }}
+                                                </span>
+                                                <span class="text-uppercase tracking-wider small text-muted font-monospace fw-bold">
+                                                    {{ pedido.cliente.telefone }}
+                                                </span>
+                                                <span class="badge rounded-pill text-dark text-wrap fw-semibold px-3 py-2 text-start" 
+                                                    style="background-color: rgba(214, 242, 228, 0.7); 
+                                                            border: 1px solid rgba(255, 255, 255, 0.5); 
+                                                            letter-spacing: 0.3px;
+                                                            font-size: 0.9rem;">
+                                                    {{ pedido.roupa.roupa }} <span class="text-secondary fw-normal">({{ pedido.tecido.tecido }})</span>
+                                                </span>
+                                            </h5>
+                                            <p class="card-text mb-3 d-flex align-items-center gap-1 opacity-75">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="text-muted" viewBox="0 0 16 16">
+                                                    <path d="M10.854 7.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 9.793l2.646-2.647a.5.5 0 0 1 .708 0z"/>
+                                                    <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
+                                                </svg>
+                                                <small class="text-muted font-monospace" style="font-size: 0.75rem; letter-spacing: 0.2px;">
+                                                    Entrada: {{ pedido.data_pedido }}
+                                                </small>
+                                            </p>
+                                            <div class="d-flex w-100 gap-2 flex-wrap mt-auto">
+                                                <button type="button" 
+                                                    class="btn d-inline-flex align-items-center justify-content-center" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#excluirPedido{{ pedido.id }}"
+                                                    style="background-color: rgba(220, 53, 69, 0.1); 
+                                                        color: #dc3545; 
+                                                        border: 1px solid rgba(220, 53, 69, 0.2);
+                                                        font-weight: 500;
+                                                        transition: all 0.2s ease;">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3 me-2" viewBox="0 0 16 16">
+                                                        <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5"/>
+                                                    </svg>
+                                                    Excluir
+                                                </button>
+                                                <button type="button" class="btn btn-sm flex-grow-1 d-inline-flex align-items-center justify-content-center" 
+                                                    data-bs-toggle="modal" data-bs-target="#modalVerPedido{{ pedido.id }}"
+                                                    style="background-color: rgba(43, 122, 90, 0.15); 
+                                                        color: #2b7a5a; 
+                                                        border: 1px solid rgba(43, 122, 90, 0.3);
+                                                        font-weight: 600;
+                                                        letter-spacing: 0.3px;
+                                                        transition: all 0.2s ease;">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-folder2-open me-2" viewBox="0 0 16 16">
+                                                        <path d="M1 3.5A1.5 1.5 0 0 1 2.5 2h2.764c.958 0 1.76.56 2.311 1.184C7.985 3.648 8.48 4 9 4h4.5A1.5 1.5 0 0 1 15 5.5v.64c.57.265.94.876.856 1.546l-.64 5.124A2.5 2.5 0 0 1 12.733 15H3.266a2.5 2.5 0 0 1-2.481-2.19l-.64-5.124A1.5 1.5 0 0 1 1 6.14zM2 6h12v-.5a.5.5 0 0 0-.5-.5H9c-.964 0-1.71-.629-2.174-1.154C6.374 3.334 5.82 3 5.264 3H2.5a.5.5 0 0 0-.5.5zm-.367 1a.5.5 0 0 0-.496.562l.64 5.124A1.5 1.5 0 0 0 3.266 14h9.468a1.5 1.5 0 0 0 1.489-1.314l.64-5.124A.5.5 0 0 0 14.367 7z"/>
+                                                    </svg>
+                                                    Abrir
+                                                </button>
+                                                {% if pedido.img.all %}
+                                                    <a href="{% url 'album' pedido.id %}" 
+                                                        target="_blank" 
+                                                        rel="noopener noreferrer"
+                                                        class="btn w-100 mt-1 d-inline-flex align-items-center justify-content-center"
+                                                        style="background-color: rgba(13, 110, 253, 0.15); 
+                                                            color: #0d6efd; 
+                                                            border: 1px solid rgba(13, 110, 253, 0.3); 
+                                                            font-weight: 500;
+                                                            font-size: 0.85rem;
+                                                            text-decoration: none; /* Garante que não vai criar um sublinhado de link */
+                                                            transition: all 0.2s ease;"
+                                                        >
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-card-image me-2" viewBox="0 0 16 16">
+                                                            <path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
+                                                            <path d="M1.5 2A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2zm13 1a.5.5 0 0 1 .5.5v6l-3.775-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12v.54L1 12.5v-9a.5.5 0 0 1 .5-.5z"/>
+                                                        </svg>
+                                                        Álbum de imagens
+                                                    </a>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="card-body d-flex flex-column justify-content-between p-3">
+                                            <div class="d-flex flex-column gap-3">
+                                                <div class="d-flex align-items-center justify-content-between border-bottom pb-2" style="border-color: rgba(255, 255, 255, 0.15) !important;">
+                                                    <span class="text-uppercase small tracking-wider fw-bold text-secondary" style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                                                        Preço
+                                                    </span>
+                                                    {% if pedido.preco %}
+                                                        <span class="fw-bold fs-5" style="color: #2b7a5a;">
+                                                            {{ pedido.preco }}
+                                                        </span>
+                                                    {% else %}
+                                                        <span class="badge rounded-pill fw-medium px-2.5 py-1" style="background-color: rgba(0, 0, 0, 0.08); color: #666; font-size: 0.8rem;">
+                                                            A definir
+                                                        </span>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="d-flex flex-column gap-1">
+                                                    <span class="text-uppercase small tracking-wider fw-bold text-secondary" style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                                                        Observações
+                                                    </span>
+                                                    {% if pedido.observacao %}
+                                                        <div class="d-flex align-items-center gap-1.5 mt-1">
+                                                            <span class="badge rounded-pill fw-semibold text-dark px-3 py-1.5" 
+                                                                style="background-color: rgba(255, 193, 7, 0.2); border: 1px solid rgba(255, 193, 7, 0.3); font-size: 0.75rem;">
+                                                                Possui observações
+                                                            </span>
+                                                        </div>
+                                                    {% else %}
+                                                        <p class="card-text small text-muted italic mb-0 opacity-75">
+                                                            Nenhuma observação registrada
+                                                        </p>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="nenhum-pedido">
+            <h1>Nenhum pedido encontrado!</h1>
+            <img src="{% static 'imgs/nenhum_pedido.png' %}" alt="Nenhum pedido encontrado">
+        </div>
+    {% endif %}
 </main>

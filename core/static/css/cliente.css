@@ -25,7 +25,6 @@ header {
     box-shadow: 0px 0px 8px 2px #4444445e;
     text-align: center;
     padding: 20px;
-    color: #DAFDBA;
     width: 100%;
     z-index: 1000;
     box-sizing: border-box;
@@ -42,8 +41,7 @@ header {
 main {
     flex: 1;
     overflow-y: auto;
-    padding: 10px;
-    color: #DAFDBA;
+    padding: 10px; 
     box-sizing: border-box;
 }
 
