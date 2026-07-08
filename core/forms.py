@@ -1,5 +1,5 @@
 from django import forms
-from .models import Cliente, Pedido, Servico
+from .models import Cliente, Pedido, Servico, Roupa, Tecido
 
 
 class CadastroCliente(forms.ModelForm):
@@ -65,9 +65,21 @@ class CadastroCliente(forms.ModelForm):
 class CadastroPedido(forms.ModelForm):
 
     servico = forms.ModelMultipleChoiceField(
-        queryset=Servico.objects.all(),
+        queryset=Servico.objects.filter(disponivel=True),
         widget=forms.CheckboxSelectMultiple(),
         label="Serviços",
+    )
+
+    roupa = forms.ModelChoiceField(
+        queryset=Roupa.objects.filter(disponivel=True),
+        widget=forms.Select(attrs={'class': 'form-select w-auto'}),
+        label="Roupas"
+    )
+
+    tecido = forms.ModelChoiceField(
+        queryset=Tecido.objects.filter(disponivel=True),
+        widget=forms.Select(attrs={'class': 'form-select w-auto'}),
+        label="Tecidos"
     )
     
     class Meta:
@@ -83,11 +95,5 @@ class CadastroPedido(forms.ModelForm):
                 'rows': 3, 
                 'class': 'form-control', 
                 'placeholder': 'Detalhes do pedido...'
-            }),
-            'roupa': forms.Select(attrs={
-                'class': 'form-select w-auto'
-            }),
-            'tecido': forms.Select(attrs={
-                'class': 'form-select w-auto'
-            }),
+            })
         }

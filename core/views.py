@@ -9,15 +9,30 @@ from PIL import Image
 
 from django.http import HttpResponseNotFound
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.db.models import Case, Value, When
 from django.shortcuts import render, redirect, get_object_or_404
-from django.core.files.base import ContentFile
+from django.core.exceptions import PermissionDenied
 
 from .forms import CadastroCliente, CadastroPedido
-from .models import Cliente, Administrador, Servico, Pedido, ImagemPedido
+from .models import Cliente, Administrador, Servico, Pedido, ImagemPedido, Roupa, Tecido
+
+
+# Funções
+def eh_cliente(user):
+    if user.is_authenticated and hasattr(user, 'cliente'):
+        return True
+    raise PermissionDenied
+
+def eh_administrador(user):
+    if user.is_authenticated and hasattr(user, 'administrador'):
+        return True
+    raise PermissionDenied
+
+def pluralizar(quantidade, singular, plural):
+    return f"{quantidade} {singular}" if quantidade == 1 else f"{quantidade} {plural}"
 
 
 # Views
@@ -133,7 +148,9 @@ def dashboard_view(request):
             'nome': nome_resumido,
             'telefone': request.user.cliente.telefone,
             'sexo': request.user.cliente.sexo,
-            'qtde_servico': Servico.objects.count(),
+            'qtd_servicos': Servico.objects.filter(disponivel=True).count(),
+            'qtd_roupas': Roupa.objects.filter(disponivel=True).count(),
+            'qtd_tecidos': Tecido.objects.filter(disponivel=True).count(),
             'form': CadastroPedido(),
             'pedidos': pedidos_base.order_by(Case(
                 When(status='andamento', then=Value(1)),
@@ -144,6 +161,7 @@ def dashboard_view(request):
                 default=Value(6)
             )),
             'filtros_pedidos': filtros_pedidos_salvos,
+            'pedidos_com_servicos_indisponiveis': list(Pedido.objects.filter(servico__disponivel=False).distinct().values_list('id', flat=True)),
         }
     else:
         # Filtros
@@ -217,11 +235,19 @@ def dashboard_view(request):
             'clientes': Cliente.objects.all().order_by('nome'),
             'filtros_pedidos': filtros_pedidos_salvos,
             'filtros_clientes': filtros_clientes_salvos,
+            'servicos': Servico.objects.all(),
+            'servicos_indisponiveis': Servico.objects.filter(disponivel=False),
+            'roupas': Roupa.objects.all(),
+            'roupas_indisponiveis': Roupa.objects.filter(disponivel=False),
+            'tecidos': Tecido.objects.all(),
+            'tecidos_indisponiveis': Tecido.objects.filter(disponivel=False),
+            'pedidos_com_servicos_indisponiveis': list(Pedido.objects.filter(servico__disponivel=False).distinct().values_list('id', flat=True)),
         }
     
     return render(request, 'dashboard.html', context)
 
 @login_required(login_url='login')
+@user_passes_test(eh_cliente)
 def cadastrar_pedido_view(request):   
     form_pedido = CadastroPedido(request.POST)
     
@@ -311,7 +337,43 @@ def album_pedido_view(request, id):
 
     return render(request, 'album.html', context)
 
+@login_required(login_url='login')
+@user_passes_test(eh_administrador)
+def gerenciador_view(request):
+    lista_servicos = [s.strip().capitalize() for s in request.POST.get('servicos').split(',') if s.strip()]
 
-def pluralizar(quantidade, singular, plural):
-    return f"{quantidade} {singular}" if quantidade == 1 else f"{quantidade} {plural}"
+    lista_roupas = [s.strip().capitalize() for s in request.POST.get('roupas').split(',') if s.strip()]
 
+    lista_tecidos = [s.strip().capitalize() for s in request.POST.get('tecidos').split(',') if s.strip()]
+
+    # ------------SERVIÇO---------------
+    Servico.objects.filter(servico__in=lista_servicos).update(disponivel=True)
+    Servico.objects.exclude(servico__in=lista_servicos).update(disponivel=False)
+    servicos_existentes = Servico.objects.filter(servico__in=lista_servicos).values_list('servico', flat=True)
+
+    for novo_servico in lista_servicos:
+        if novo_servico not in servicos_existentes:
+            Servico.objects.create(servico=novo_servico, disponivel=True)
+    
+    # ------------ROUPA---------------
+    Roupa.objects.filter(roupa__in=lista_roupas).update(disponivel=True)
+    Roupa.objects.exclude(roupa__in=lista_roupas).update(disponivel=False)
+    roupas_existentes = Roupa.objects.filter(roupa__in=lista_roupas).values_list('roupa', flat=True)
+
+    for nova_roupa in lista_roupas:
+        if nova_roupa not in roupas_existentes:
+            Roupa.objects.create(roupa=nova_roupa, disponivel=True)
+    
+    # ------------TECIDO---------------
+    Tecido.objects.filter(tecido__in=lista_tecidos).update(disponivel=True)
+    Tecido.objects.exclude(tecido__in=lista_tecidos).update(disponivel=False)
+    tecidos_existentes = Tecido.objects.filter(tecido__in=lista_tecidos).values_list('tecido', flat=True)
+
+    for novo_tecido in lista_tecidos:
+        if novo_tecido not in tecidos_existentes:
+            Tecido.objects.create(tecido=novo_tecido, disponivel=True)
+
+
+    messages.success(request, "Alterações aplicadas!")
+    
+    return redirect('dashboard')
