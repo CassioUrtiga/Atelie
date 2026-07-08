@@ -47,6 +47,7 @@ class ImagemPedido(models.Model):
 
 class Servico(models.Model):
     servico = models.CharField(max_length=50, unique=True)
+    disponivel = models.BooleanField(default=True)
 
     class Meta:
         verbose_name = "servico"
@@ -57,6 +58,7 @@ class Servico(models.Model):
 
 class Tecido(models.Model):
     tecido = models.CharField(max_length=50, unique=True)
+    disponivel = models.BooleanField(default=True)
 
     class Meta:
         verbose_name = "tecido"
@@ -67,6 +69,7 @@ class Tecido(models.Model):
 
 class Roupa(models.Model):
     roupa = models.CharField(max_length=50, unique=True)
+    disponivel = models.BooleanField(default=True)
 
     class Meta:
         verbose_name = "roupa"

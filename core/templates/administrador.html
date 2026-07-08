@@ -7,13 +7,13 @@
                 type="button" 
                 class="btn btn-primary btn-lg d-inline-flex align-items-center gap-2" 
                 data-bs-toggle="modal" 
-                data-bs-target="#modalPedido"
+                data-bs-target="#modalServicos"
             >
-                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
-                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
-                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                    <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                    <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
                 </svg>
-                <span>Serviços</span>
+                <span>Gerenciar</span>
             </button>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation" style="margin-left: 20px;">
             <span class="navbar-toggler-icon"></span>
@@ -180,7 +180,7 @@
                                                             {% if cliente.id|stringformat:"s" in filtros_clientes %} checked {% endif %}
                                                         >
                                                         <label class="form-check-label" for="check{{ cliente.id }}Clientes">
-                                                            {{ cliente.nome|title }}
+                                                            {{ cliente.nome|capfirst }}
                                                         </label>
                                                     </div>
                                                 </li>
@@ -201,7 +201,7 @@
     <div class="card shadow-sm" style="max-width: 350px;">
         <div class="card-body d-flex align-items-center gap-3" style="height: 70px;">
             <div class="flex-grow-1">
-                <h5 class="card-title mb-1 text-dark fw-semibold">{{ nome|title }}</h5>
+                <h5 class="card-title mb-1 text-dark fw-semibold">{{ nome|capfirst }}</h5>
                 <p class="card-text mb-0 text-muted small">
                     {{ telefone }}
                 </p>
@@ -213,55 +213,124 @@
     </div>
 </header>
 
-<!-- Modal adicionar pedido -->
-<div class="modal fade" id="modalPedido" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+<!-- Modal gerenciar  -->
+<div class="modal fade" id="modalServicos" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Realizar Novo Pedido</h5>
+                <h5 class="modal-title" id="exampleModalLongTitle">Gerenciador</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="{% url 'pedido' %}" id="formularioPedido" method="post" enctype="multipart/form-data" autocomplete="off">
+            <form action="{% url 'gerenciar' %}" id="formularioAddServicos" method="post" autocomplete="off">
                 {% csrf_token %}
-                
-                <div class="modal-body p-4">
-                    <div class="mb-4 text-center p-3 border border-dashed rounded bg-light">
-                        <div id="novaImagem" class="mb-2"></div>
-                        <button type="button" class="btn btn-outline-primary btn-sm d-inline-flex align-items-center justify-content-center gap-2" id="addImg">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
-                                <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2"/>
-                            </svg>
-                            <span>Adicionar Imagem</span>
-                        </button>
-                    </div>
+                <div class="modal-body p-4">                  
                     <div class="row g-3">
-                        <div class="border border-secondary-subtle rounded-3 p-3 bg-light shadow-sm">
-                            <div class="form-label fw-semibold text-secondary">Escolha o serviço</div>
-                            {{ form.servico }}
-                        </div>
-                        <div class="d-flex flex-wrap justify-content-start align-items-center gap-3 border border-secondary-subtle rounded-3 p-3 bg-light shadow-sm">
-                            <div>
-                                <label class="form-label fw-semibold text-secondary">Roupa</label>
-                                {{ form.roupa }}
+                        <div class="border border-secondary-subtle rounded-3 p-3 bg-light shadow-sm mb-4 tag-wrapper">
+                            <div class="form-label fw-semibold text-secondary">Tipos de Serviços</div>
+                            <div id="container-servicos" class="form-control d-flex flex-wrap align-items-center gap-2 py-2 tag-container" style="cursor: text;">
+                                {% for servico in servicos %}
+                                    {% if servico.disponivel %}
+                                        <span class="badge bg-primary d-flex align-items-center gap-2 p-2 fs-6 tag-predefinida">
+                                            {{ servico.servico }}
+                                            <button type="button" class="btn-close btn-close-white btn-remover-predefinido" style="font-size: 0.6rem;" data-item="{{ servico.servico }}"></button>
+                                        </span>
+                                    {% endif %}
+                                {% endfor %}
+                                <input type="text" name="servicos0" class="border-0 flex-grow-1 tag-input" style="outline: none;" placeholder="Digite e aperte Enter ou Vírgula">
                             </div>
-                            <div>
-                                <label class="form-label fw-semibold text-secondary">Tecido</label>
-                                {{ form.tecido }}
+                            <div id="removidos-servicos" class="text-muted small mb-3 d-flex align-items-center gap-2 flex-wrap bg-light p-2 rounded border border-light-subtle container-removidos {% if not servicos_indisponiveis|length %}d-none{% endif %}">
+                                <span class="fw-semibold text-secondary d-flex align-items-center gap-1">
+                                    Removidos:
+                                </span>
+                                {% if servicos_indisponiveis|length %}
+                                    {% for servico in servicos_indisponiveis %}
+                                        <span class="badge bg-body-secondary text-secondary-emphasis border border-secondary-subtle px-2 py-1.5 rounded-pill shadow-sm transition-all opacity-75 btn-readicionar d-inline-flex align-items-center gap-2" 
+                                            style="cursor: pointer;" 
+                                            title="Clique para adicionar novamente" 
+                                            data-item="{{ servico.servico }}">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-repeat" viewBox="0 0 16 16">
+                                                <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41m-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9"/>
+                                                <path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5 5 0 0 0 8 3M3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9z"/>
+                                            </svg>
+                                            {{ servico.servico }}
+                                        </span>
+                                    {% endfor %}
+                                {% endif %}
                             </div>
+                            <input type="hidden" name="servicos" id="input-servicos" class="itens-escondidos" value="{% for servico in servicos %}{% if servico.disponivel %}{{ servico.servico }}{% if not forloop.last %},{% endif %}{% endif %}{% endfor %}">
                         </div>
-                        <div class="col-12 border border-secondary-subtle rounded-3 p-3 bg-light shadow-sm">
-                            <label class="form-label fw-semibold text-secondary">Data de Entrega / Conclusão</label>
-                            {{ form.data_conclusao }}
+                        <div class="border border-secondary-subtle rounded-3 p-3 bg-light shadow-sm mb-4 tag-wrapper">
+                            <div class="form-label fw-semibold text-secondary">Tipos de Roupas</div>
+                            <div id="container-roupas" class="form-control d-flex flex-wrap align-items-center gap-2 py-2 tag-container" style="cursor: text;">
+                                {% for roupa in roupas %}
+                                    {% if roupa.disponivel %}
+                                        <span class="badge bg-primary d-flex align-items-center gap-2 p-2 fs-6 tag-predefinida">
+                                            {{ roupa.roupa }}
+                                            <button type="button" class="btn-close btn-close-white btn-remover-predefinido" style="font-size: 0.6rem;" data-item="{{ roupa.roupa }}"></button>
+                                        </span>
+                                    {% endif %}
+                                {% endfor %}
+                                <input type="text" name="roupas0" class="border-0 flex-grow-1 tag-input" style="outline: none;" placeholder="Digite e aperte Enter ou Vírgula">
+                            </div>
+                            <div id="removidos-roupas" class="text-muted small mb-3 d-flex align-items-center gap-2 flex-wrap bg-light p-2 rounded border border-light-subtle container-removidos {% if not roupas_indisponiveis|length %}d-none{% endif %}">
+                                <span class="fw-semibold text-secondary d-flex align-items-center gap-1">
+                                    Removidos:
+                                </span>
+                                {% if roupas_indisponiveis|length %}
+                                    {% for roupa in roupas_indisponiveis %}
+                                        <span class="badge bg-body-secondary text-secondary-emphasis border border-secondary-subtle px-2 py-1.5 rounded-pill shadow-sm transition-all opacity-75 btn-readicionar d-inline-flex align-items-center gap-2" 
+                                            style="cursor: pointer;" 
+                                            title="Clique para adicionar novamente" 
+                                            data-item="{{ roupa.roupa }}">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-repeat" viewBox="0 0 16 16">
+                                                <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41m-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9"/>
+                                                <path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5 5 0 0 0 8 3M3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9z"/>
+                                            </svg>
+                                            {{ roupa.roupa }}
+                                        </span>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                            <input type="hidden" name="roupas" id="input-roupas" class="itens-escondidos" value="{% for roupa in roupas %}{% if roupa.disponivel %}{{ roupa.roupa }}{% if not forloop.last %},{% endif %}{% endif %}{% endfor %}">
                         </div>
-                        <div class="col-12 border border-secondary-subtle rounded-3 p-3 bg-light shadow-sm">
-                            <label class="form-label fw-semibold text-secondary">Detalhes adicionais</label>
-                            {{ form.detalhes }}
+                        <div class="border border-secondary-subtle rounded-3 p-3 bg-light shadow-sm mb-4 tag-wrapper">
+                            <div class="form-label fw-semibold text-secondary">Tipos de Tecidos</div>
+                            <div id="container-tecidos" class="form-control d-flex flex-wrap align-items-center gap-2 py-2 tag-container" style="cursor: text;">
+                                {% for tecido in tecidos %}
+                                    {% if tecido.disponivel %}
+                                        <span class="badge bg-primary d-flex align-items-center gap-2 p-2 fs-6 tag-predefinida">
+                                            {{ tecido.tecido }}
+                                            <button type="button" class="btn-close btn-close-white btn-remover-predefinido" style="font-size: 0.6rem;" data-item="{{ tecido.tecido }}"></button>
+                                        </span>
+                                    {% endif %}
+                                {% endfor %}
+                                <input type="text" name="tecidos0" class="border-0 flex-grow-1 tag-input" style="outline: none;" placeholder="Digite e aperte Enter ou Vírgula">
+                            </div>
+                            <div id="removidos-tecidos" class="text-muted small mb-3 d-flex align-items-center gap-2 flex-wrap bg-light p-2 rounded border border-light-subtle container-removidos {% if not tecidos_indisponiveis|length %}d-none{% endif %}">
+                                <span class="fw-semibold text-secondary d-flex align-items-center gap-1">
+                                    Removidos:
+                                </span>
+                                {% if tecidos_indisponiveis|length %}
+                                    {% for tecido in tecidos_indisponiveis %}
+                                        <span class="badge bg-body-secondary text-secondary-emphasis border border-secondary-subtle px-2 py-1.5 rounded-pill shadow-sm transition-all opacity-75 btn-readicionar d-inline-flex align-items-center gap-2" 
+                                            style="cursor: pointer;" 
+                                            title="Clique para adicionar novamente" 
+                                            data-item="{{ tecido.tecido }}">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-repeat" viewBox="0 0 16 16">
+                                                <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41m-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9"/>
+                                                <path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5 5 0 0 0 8 3M3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9z"/>
+                                            </svg>
+                                            {{ tecido.tecido }}
+                                        </span>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                            <input type="hidden" name="tecidos" id="input-tecidos" class="itens-escondidos" value="{% for tecido in tecidos %}{% if tecido.disponivel %}{{ tecido.tecido }}{% if not forloop.last %},{% endif %}{% endif %}{% endfor %}">
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer bg-light border-top-0 d-flex w-100 gap-2 m-0 p-3">
-                    <button type="submit" class="btn btn-primary col">Enviar Pedido</button>
-                    <button type="button" class="btn btn-secondary col-auto px-4" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary col">Salvar</button>
                 </div>
             </form>
         </div>
@@ -279,10 +348,25 @@
                             <span class="text-secondary">Pedido</span> Nº {{ pedido.id }}
                         </h5>
                         <div class="d-flex flex-wrap gap-1 small">
-                            <span class="badge bg-secondary-subtle text-secondary-emphasis border border-secondary-subtle">
+                            <span class="badge bg-secondary-subtle text-secondary-emphasis border border-secondary-subtle fs-6 px-2 py-1 {% if not pedido.roupa.disponivel %} text-muted opacity-75 {% endif %}" style="
+                                {% if not pedido.roupa.disponivel %}
+                                    background-color: rgba(255, 243, 205, 0.7) !important;
+                                    border: 1px solid rgba(255, 193, 7, 0.4) !important;
+                                {% endif %}
+                                {% if not pedido.roupa.disponivel %}text-decoration: line-through;{% endif %}
+                                "
+                            >
                                 {{ pedido.roupa.roupa }}
                             </span>
-                            <span class="badge bg-light text-muted border">
+                            <span class="badge bg-light text-muted border fs-6 px-2 py-1 {% if not pedido.tecido.disponivel %} text-muted opacity-75 {% endif %}" 
+                                style="
+                                    {% if not pedido.tecido.disponivel %}
+                                        background-color: rgba(255, 243, 205, 0.7) !important;
+                                        border: 1px solid rgba(255, 193, 7, 0.4) !important;
+                                    {% endif %}
+                                    {% if not pedido.tecido.disponivel %}text-decoration: line-through;{% endif %}
+                                "
+                            >
                                 {{ pedido.tecido.tecido }}
                             </span>
                         </div>
@@ -293,9 +377,16 @@
                     <p class="card-text">
                         <h5>
                             Serviços:
-                            {% for s in pedido.servico.all %}
-                                <span class="badge bg-secondary-subtle text-secondary-emphasis border border-secondary-subtle px-3 py-2 rounded-pill fw-medium me-1 mb-1">
-                                    {{ s.servico }}
+                            {% for servico in pedido.servico.all %}
+                                <span class="badge bg-secondary-subtle text-secondary-emphasis border border-secondary-subtle px-3 py-2 rounded-pill fw-medium me-1 mb-1 d-inline-flex align-items-center {% if not servico.disponivel %} text-muted opacity-75 {% endif %}"
+                                    style="
+                                        {% if not servico.disponivel %}
+                                            background-color: rgba(255, 243, 205, 0.7) !important;
+                                            border: 1px solid rgba(255, 193, 7, 0.4) !important;
+                                            text-decoration: line-through;
+                                        {% endif %}
+                                    ">
+                                    {{ servico.servico }}
                                 </span>
                             {% endfor %}
                         </h5>
@@ -478,22 +569,36 @@
                                     <div class="card mb-3">
                                         <div class="card-header">
                                             <h5 class="card-title mt-2 d-flex flex-column gap-1">
-                                                <span class="text-uppercase tracking-wider small text-muted font-monospace fw-bold">
-                                                    Pedido Nº{{ pedido.id }}
-                                                </span>
-                                                <span class="text-uppercase tracking-wider small text-muted font-monospace fw-bold">
-                                                    {{ pedido.cliente.nome }}
-                                                </span>
-                                                <span class="text-uppercase tracking-wider small text-muted font-monospace fw-bold">
-                                                    {{ pedido.cliente.telefone }}
-                                                </span>
-                                                <span class="badge rounded-pill text-dark text-wrap fw-semibold px-3 py-2 text-start" 
-                                                    style="background-color: rgba(214, 242, 228, 0.7); 
-                                                            border: 1px solid rgba(255, 255, 255, 0.5); 
-                                                            letter-spacing: 0.3px;
-                                                            font-size: 0.9rem;">
-                                                    {{ pedido.roupa.roupa }} <span class="text-secondary fw-normal">({{ pedido.tecido.tecido }})</span>
-                                                </span>
+                                                <div class="d-flex flex-column gap-1 pb-2 border-bottom border-light-subtle text-start">
+                                                    <div>
+                                                        <span class="badge text-bg-dark font-monospace text-uppercase px-2 py-1" style="letter-spacing: 0.5px; font-size: 0.7rem;">
+                                                            Pedido Nº {{ pedido.id }}
+                                                        </span>
+                                                    </div>
+                                                    <div class="text-uppercase tracking-wider fw-bold text-dark font-monospace mt-1" style="font-size: 1rem; letter-spacing: 0.5px;">
+                                                        {{ pedido.cliente.nome }}
+                                                    </div>
+                                                    <div class="text-muted font-monospace small" style="font-size: 0.85rem;">
+                                                        <span class="text-secondary opacity-75">Tel:</span> {{ pedido.cliente.telefone }}
+                                                    </div>
+                                                </div>
+                                                {% if not pedido.roupa.disponivel or not pedido.tecido.disponivel or pedido.id in pedidos_com_servicos_indisponiveis %}
+                                                    <span class="badge rounded-pill text-dark text-wrap fw-semibold px-3 py-2 mt-2 mb-2 text-start d-block w-100" 
+                                                        style="background-color: rgba(255, 243, 205, 0.9); 
+                                                                border: 1px solid rgba(255, 220, 150, 0.5); 
+                                                                letter-spacing: 0.3px;
+                                                                font-size: 0.9rem;">
+                                                        <span class="text-secondary fw-normal">Contém itens indisponíveis</span>
+                                                    </span>
+                                                {% else %}
+                                                    <span class="badge rounded-pill text-dark text-wrap fw-semibold px-3 py-2 mt-2 mb-2 text-start" 
+                                                        style="background-color: rgba(214, 242, 228, 0.7); 
+                                                                border: 1px solid rgba(255, 255, 255, 0.5); 
+                                                                letter-spacing: 0.3px;
+                                                                font-size: 0.9rem;">
+                                                        {{ pedido.roupa.roupa }} <span class="text-secondary fw-normal">({{ pedido.tecido.tecido }})</span>
+                                                    </span>
+                                                {% endif %}
                                             </h5>
                                             <p class="card-text mb-3 d-flex align-items-center gap-1 opacity-75">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="text-muted" viewBox="0 0 16 16">
