@@ -325,8 +325,14 @@ def excluir_pedido_view(request, id):
 
 @login_required(login_url='login')
 def album_pedido_view(request, id):
-    cliente = request.user.cliente
-    pedido = get_object_or_404(Pedido, id=id, cliente=cliente)
+    is_cliente = hasattr(request.user, 'cliente')
+
+    if is_cliente:
+        cliente = request.user.cliente
+        pedido = get_object_or_404(Pedido, id=id, cliente=cliente)
+    else:
+        pedido = get_object_or_404(Pedido, id=id)
+        cliente = pedido.cliente
 
     context = {
         'nome': cliente.nome.split()[0],
@@ -375,5 +381,30 @@ def gerenciador_view(request):
 
 
     messages.success(request, "Alterações aplicadas!")
+    
+    return redirect('dashboard')
+
+@login_required(login_url='login')
+@user_passes_test(eh_administrador)
+def editar_pedido_view(request, id):
+    pedido = get_object_or_404(Pedido, id=id)
+    
+    try:
+        status = request.POST.get('status')
+        preco = request.POST.get('preco')
+        obs = request.POST.get('observacao')
+
+        pedido.status = status
+
+        if obs:
+            pedido.observacao = obs 
+
+        if preco:
+            pedido.preco = preco
+                
+        pedido.save()
+        messages.success(request, f"Pedido (Nº{id}) foi atualizado!")
+    except:
+        messages.error(request, "Ocorreu um erro ao editar o pedido!")
     
     return redirect('dashboard')
