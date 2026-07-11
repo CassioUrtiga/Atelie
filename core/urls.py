@@ -3,7 +3,7 @@ from django.urls import path
 from .views import (
     inicial_view, dashboard_view, cadastrar_usuario_view, login_view, 
     logout_view, cadastrar_pedido_view, excluir_pedido_view, album_pedido_view,
-    gerenciador_view, editar_pedido_view
+    gerenciador_view, editar_pedido_view, cancelar_pedido_view,
 )
 
 urlpatterns = [
@@ -17,4 +17,5 @@ urlpatterns = [
     path('album/<int:id>/', album_pedido_view, name='album'),
     path('gerenciar/', gerenciador_view, name='gerenciar'),
     path('editar-pedido/<int:id>/', editar_pedido_view, name='editar-pedido'),
+    path('cancelar-pedido/<int:id>/', cancelar_pedido_view, name='cancelar-pedido'),
 ]
