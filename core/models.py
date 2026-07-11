@@ -99,6 +99,23 @@ class Pedido(models.Model):
     def __str__(self) -> str:
         return f"Pedido {self.id} - {self.cliente.nome}"
 
+class Relatorio(models.Model):
+    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
+    servico = models.TextField()
+    roupa = models.CharField(max_length=50)
+    tecido = models.CharField(max_length=50)
+    status = models.CharField(max_length=20)
+    data_criado_pedido = models.DateTimeField()
+    data_finalizado_pedido = models.DateTimeField()
+    preco = models.CharField(max_length=10)
+    
+    class Meta:
+        verbose_name = "relatório"
+        verbose_name_plural = "relatórios"
+
+    def __str__(self) -> str:
+        return f"Relatório {self.id} - {self.cliente.nome}"
+
 
 @receiver(pre_delete, sender=Pedido)
 def pedido_delete_img(sender, instance, **kwargs):
