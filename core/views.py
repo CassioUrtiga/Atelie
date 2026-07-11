@@ -1,14 +1,10 @@
-import base64
-import re
-import requests
-import tempfile
-from functools import reduce
-from io import BytesIO
-from datetime import datetime, date, timedelta
+import openpyxl
+
+from datetime import timedelta
 from django.utils import timezone
 from PIL import Image
 
-from django.http import HttpResponseNotFound
+from django.http import HttpResponse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import authenticate, login, logout
@@ -18,7 +14,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.core.exceptions import PermissionDenied
 
 from .forms import CadastroCliente, CadastroPedido
-from .models import Cliente, Administrador, Servico, Pedido, ImagemPedido, Roupa, Tecido
+from .models import Cliente, Administrador, Servico, Pedido, ImagemPedido, Roupa, Tecido, Relatorio
 
 
 # Funções
@@ -124,7 +120,20 @@ def dashboard_view(request):
                 atualizacao_status__lte=limite_tempo
             )
 
-            pedidos_para_excluir.delete()
+            if (pedidos_para_excluir):
+                for pedido in pedidos_para_excluir:
+                    Relatorio.objects.create(
+                        cliente=request.user.cliente,
+                        servico=", ".join(pedido.servico.values_list('servico', flat=True)),
+                        roupa=pedido.roupa,
+                        tecido=pedido.tecido,
+                        status=pedido.status,
+                        data_criado_pedido=pedido.data_pedido,
+                        data_finalizado_pedido=pedido.atualizacao_status,
+                        preco=pedido.preco
+                    )
+
+                pedidos_para_excluir.delete()
 
             # lógica de filtro de pedidos
             filtros_pedidos_salvos = request.session.get('filtros_pedidos')
@@ -204,7 +213,20 @@ def dashboard_view(request):
                 atualizacao_status__lte=limite_tempo
             )
 
-            pedidos_para_excluir.delete()
+            if (pedidos_para_excluir):
+                for pedido in pedidos_para_excluir:
+                    Relatorio.objects.create(
+                        cliente=pedido.cliente,
+                        servico=", ".join(pedido.servico.values_list('servico', flat=True)),
+                        roupa=pedido.roupa,
+                        tecido=pedido.tecido,
+                        status=pedido.status,
+                        data_criado_pedido=pedido.data_pedido,
+                        data_finalizado_pedido=pedido.atualizacao_status,
+                        preco=pedido.preco
+                    )
+
+                pedidos_para_excluir.delete()
 
             # lógica de filtro de pedidos
             filtros_pedidos_salvos = request.session.get('filtros_pedidos')
@@ -337,11 +359,41 @@ def cadastrar_pedido_view(request):
 
 @login_required(login_url='login')
 def excluir_pedido_view(request, id):
-    cliente = request.user.cliente
+    is_cliente = hasattr(request.user, 'cliente')
 
-    pedido = get_object_or_404(Pedido, id=id, cliente=cliente)
-    pedido.delete()
+    if is_cliente:
+        pedido = get_object_or_404(Pedido, id=id, cliente=request.user.cliente)
 
+        if pedido.status not in ['recebido', 'andamento']:
+            Relatorio.objects.create(
+                cliente=request.user.cliente,
+                servico=", ".join(pedido.servico.values_list('servico', flat=True)),
+                roupa=pedido.roupa,
+                tecido=pedido.tecido,
+                status=pedido.status,
+                data_criado_pedido=pedido.data_pedido,
+                data_finalizado_pedido=pedido.atualizacao_status,
+                preco=pedido.preco
+            )
+
+        pedido.delete()
+    else:
+        pedido = get_object_or_404(Pedido, id=id)
+
+        if pedido.status not in ['recebido', 'andamento']:
+            Relatorio.objects.create(
+                cliente=pedido.cliente,
+                servico=", ".join(pedido.servico.values_list('servico', flat=True)),
+                roupa=pedido.roupa,
+                tecido=pedido.tecido,
+                status=pedido.status,
+                data_criado_pedido=pedido.data_pedido,
+                data_finalizado_pedido=pedido.atualizacao_status,
+                preco=pedido.preco
+            )
+
+        pedido.delete()
+    
     messages.success(request, 'Pedido excluído!')
     return redirect('dashboard')
 
@@ -430,6 +482,78 @@ def editar_pedido_view(request, id):
         messages.error(request, "Ocorreu um erro ao editar o pedido!")
     
     return redirect('dashboard')
+
+@login_required(login_url='login')
+def gerar_relatorio(request):
+    try:
+        is_cliente = hasattr(request.user, 'cliente')
+
+        if (is_cliente):
+            pedidos = Relatorio.objects.filter(cliente=request.user.cliente)
+        else:
+            pedidos = Relatorio.objects.select_related('cliente').all()
+
+        if not (pedidos):
+            messages.info(request, "Não há pedidos finalizados para a geração do relatório.")
+            return redirect('dashboard')
+
+        wb = openpyxl.Workbook()
+        ws = wb.active
+        ws.title = "Relatório de Pedidos"
+
+        if (is_cliente):
+            cabecalho = [
+                "Serviço", "Roupa", "Tecido", 
+                "Status", "Data Criação", "Data Finalização", "Preço"
+            ]
+        else:
+            cabecalho = [
+                "Cliente", "sexo", "telefone", 
+                "Serviço", "Roupa", "Tecido", 
+                "Status", "Data Criação", "Data Finalização", "Preço"
+            ]
+        ws.append(cabecalho)
+
+        for pedido in pedidos:
+            data_criacao = pedido.data_criado_pedido.strftime('%d/%m/%Y %H:%M') if pedido.data_criado_pedido else ""
+            data_fim = pedido.data_finalizado_pedido.strftime('%d/%m/%Y %H:%M') if pedido.data_finalizado_pedido else ""
+            
+            if (is_cliente):
+                linha = [
+                    pedido.servico,
+                    pedido.roupa,
+                    pedido.tecido,
+                    pedido.status,
+                    data_criacao,
+                    data_fim,
+                    pedido.preco
+                ]
+            else:
+                linha = [
+                    pedido.cliente.id,
+                    pedido.cliente.sexo,
+                    pedido.cliente.telefone,
+                    pedido.servico,
+                    pedido.roupa,
+                    pedido.tecido,
+                    pedido.status,
+                    data_criacao,
+                    data_fim,
+                    pedido.preco
+                ]
+
+            ws.append(linha)
+
+        response = HttpResponse(
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+        response["Content-Disposition"] = 'attachment; filename="relatorio_pedidos.xlsx"'
+        
+        wb.save(response)
+        return response
+    except:
+        messages.error(request, "Erro ao gerar relatório")
+        return redirect('dashboard')
 
 @login_required(login_url='login')
 def cancelar_pedido_view(request, id):
