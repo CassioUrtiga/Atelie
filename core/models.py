@@ -89,6 +89,7 @@ class Pedido(models.Model):
     observacao = models.TextField(blank=True, null=True, default="")
     preco = models.CharField(max_length=10, default="")
     status = models.CharField(max_length=20, default="recebido")
+    atualizacao_status = models.DateTimeField(auto_now=True)
     img = models.ManyToManyField(ImagemPedido)
     
     class Meta:

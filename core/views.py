@@ -5,6 +5,7 @@ import tempfile
 from functools import reduce
 from io import BytesIO
 from datetime import datetime, date, timedelta
+from django.utils import timezone
 from PIL import Image
 
 from django.http import HttpResponseNotFound
@@ -114,9 +115,20 @@ def dashboard_view(request):
             
             return redirect('dashboard')
         else:
-            filtros_pedidos_salvos = request.session.get('filtros_pedidos')
+            # Exclusão automática de pedidos após 24h
+            limite_tempo = timezone.now() - timedelta(hours=24)
             
+            pedidos_para_excluir = Pedido.objects.filter(
+                cliente=request.user.cliente,
+                status__in=['cancelado', 'pago'],
+                atualizacao_status__lte=limite_tempo
+            )
+
+            pedidos_para_excluir.delete()
+
             # lógica de filtro de pedidos
+            filtros_pedidos_salvos = request.session.get('filtros_pedidos')
+
             if filtros_pedidos_salvos and ('todos' not in filtros_pedidos_salvos):
                 pedidos_filtrados['isEmpty'] = False
                 pedidos_filtrados['dados'] = Pedido.objects.filter(
@@ -184,10 +196,20 @@ def dashboard_view(request):
             
             return redirect('dashboard')
         else:
+            # Exclusão automática de pedidos após 24h
+            limite_tempo = timezone.now() - timedelta(hours=24)
+            
+            pedidos_para_excluir = Pedido.objects.filter(
+                status__in=['cancelado', 'pago'],
+                atualizacao_status__lte=limite_tempo
+            )
+
+            pedidos_para_excluir.delete()
+
+            # lógica de filtro de pedidos
             filtros_pedidos_salvos = request.session.get('filtros_pedidos')
             filtros_clientes_salvos = request.session.get('filtros_clientes')
-            
-            # lógica de filtro de pedidos
+
             if filtros_pedidos_salvos and ('todos' not in filtros_pedidos_salvos):
                 pedidos_filtrados['isEmpty'] = False
                 pedidos_filtrados['dados'] = Pedido.objects.filter(
@@ -325,8 +347,14 @@ def excluir_pedido_view(request, id):
 
 @login_required(login_url='login')
 def album_pedido_view(request, id):
-    cliente = request.user.cliente
-    pedido = get_object_or_404(Pedido, id=id, cliente=cliente)
+    is_cliente = hasattr(request.user, 'cliente')
+
+    if is_cliente:
+        cliente = request.user.cliente
+        pedido = get_object_or_404(Pedido, id=id, cliente=cliente)
+    else:
+        pedido = get_object_or_404(Pedido, id=id)
+        cliente = pedido.cliente
 
     context = {
         'nome': cliente.nome.split()[0],
@@ -376,4 +404,42 @@ def gerenciador_view(request):
 
     messages.success(request, "Alterações aplicadas!")
     
+    return redirect('dashboard')
+
+@login_required(login_url='login')
+@user_passes_test(eh_administrador)
+def editar_pedido_view(request, id):
+    pedido = get_object_or_404(Pedido, id=id)
+    
+    try:
+        status = request.POST.get('status')
+        preco = request.POST.get('preco')
+        obs = request.POST.get('observacao')
+
+        pedido.status = status
+
+        if obs:
+            pedido.observacao = obs 
+
+        if preco:
+            pedido.preco = preco
+                
+        pedido.save()
+        messages.success(request, f"Pedido atualizado!")
+    except:
+        messages.error(request, "Ocorreu um erro ao editar o pedido!")
+    
+    return redirect('dashboard')
+
+@login_required(login_url='login')
+def cancelar_pedido_view(request, id):
+    pedido = get_object_or_404(Pedido, id=id, cliente=request.user.cliente)
+
+    try:
+        pedido.status = 'cancelado'
+        pedido.save()
+    except:
+        messages.error(request, f"Ocorreu um erro ao cancelar o pedido!")
+
+    messages.success(request, f"Pedido cancelado!")
     return redirect('dashboard')
