@@ -220,7 +220,7 @@ def dashboard_view(request):
             )),
             'filtros_pedidos': filtros_pedidos_salvos,
             'pedidos_com_servicos_indisponiveis': list(Pedido.objects.filter(servico__disponivel=False).distinct().values_list('id', flat=True)),
-            'chave_pix': Pix.objects.first().chave
+            'pix': Pix.objects.first() or False,
         }
     else:
         # Filtros
@@ -324,7 +324,7 @@ def dashboard_view(request):
             'tecidos': Tecido.objects.all(),
             'tecidos_indisponiveis': Tecido.objects.filter(disponivel=False),
             'pedidos_com_servicos_indisponiveis': list(Pedido.objects.filter(servico__disponivel=False).distinct().values_list('id', flat=True)),
-            'pix': Pix.objects.first(),
+            'pix': Pix.objects.first() or False,
         }
     
     return render(request, 'dashboard.html', context)

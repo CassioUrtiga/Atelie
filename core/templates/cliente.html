@@ -362,15 +362,19 @@
                     </div>
                     <div class="modal-body p-4">
                         <div class="mb-4 text-center p-3 border border-dashed rounded bg-light">
-                            <img 
-                                src="{{ pedido.pix_qrcode.url }}" 
-                                class="galeria-img" 
-                                style="width: 250px; height: auto;"
-                                alt="Qrcode" 
-                                draggable="false"
-                                oncontextmenu="return false;"
-                            >
-                            <h4>Pix: <span class="badge text-bg-secondary">{{ chave_pix }}</span></h4>
+                            {% if pix %}
+                                <img 
+                                    src="{{ pedido.pix_qrcode.url }}" 
+                                    class="galeria-img" 
+                                    style="width: 250px; height: auto;"
+                                    alt="Qrcode" 
+                                    draggable="false"
+                                    oncontextmenu="return false;"
+                                >
+                                <h4>Pix: <span class="badge text-bg-secondary">{{ pix.chave }}</span></h4>
+                            {% else %}
+                                <h4>Nenhuma chave pix foi cadastrada no sistema</h4>
+                            {% endif %}
                         </div>
                     </div>
                         <div class="modal-footer bg-light border-top-0 d-flex w-100 gap-2 m-0 p-3">
