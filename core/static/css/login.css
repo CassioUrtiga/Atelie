@@ -43,6 +43,10 @@ a {
     padding-bottom: 24px;
 }
 
+.padding-bottom--12 {
+    padding-bottom: 12px;
+}
+
 .padding-bottom-top {
     padding-top: 10px;
     padding-bottom: 30px;

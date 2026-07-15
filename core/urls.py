@@ -4,7 +4,7 @@ from .views import (
     inicial_view, dashboard_view, cadastrar_usuario_view, login_view, 
     logout_view, cadastrar_pedido_view, excluir_pedido_view, album_pedido_view,
     gerenciador_view, editar_pedido_view, cancelar_pedido_view, 
-    gerar_relatorio 
+    gerar_relatorio_view, metodo_pagamento_view,
 )
 
 urlpatterns = [
@@ -19,5 +19,6 @@ urlpatterns = [
     path('gerenciar/', gerenciador_view, name='gerenciar'),
     path('editar-pedido/<int:id>/', editar_pedido_view, name='editar-pedido'),
     path('cancelar-pedido/<int:id>/', cancelar_pedido_view, name='cancelar-pedido'),
-    path('relatorio/', gerar_relatorio, name='relatorio'),
+    path('relatorio/', gerar_relatorio_view, name='relatorio'),
+    path('pagamento/', metodo_pagamento_view, name='pagamento'),
 ]

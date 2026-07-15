@@ -79,21 +79,44 @@
         {% endif %}
     {% endfor %}
     <fieldset>
-      <h1><a href="{% url 'inicio' %}">Ateliê</a></h1>
+      <h1><a class="logo" href="{% url 'inicio' %}">Ateliê</a></h1>
       <span class="padding-bottom-top">Faça sua conta</span>
       <form action="{% url 'cadastrar' %}" method="post" autocomplete="off">
         {% csrf_token %}
-        {{ form }}
-        <div class="field padding-bottom--24">
+        <div class="field padding-bottom--12">
+            <label for="{{ form.nome.id_for_label }}">Nome</label>
+            {{ form.nome }}
+        </div>
+        <div class="field padding-bottom--12">
+            <label for="{{ form.username.id_for_label }}">Usuário/acesso</label>
+            {{ form.username }}
+        </div>
+        <div class="mb-3">
+            <label for="{{ form.senha.id_for_label }}">Senha</label> 
+            <div class="input-group">
+                {{ form.senha }}
+                <button class="btn btn-outline-secondary" type="button" id="btn-senha" onclick="toggleSenha()" style="border-color: #ced4da;">
+                    <svg id="icone-olho" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
+                        <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"/>
+                        <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div class="field padding-bottom--12">
+            <label for="{{ form.sexo.id_for_label }}">Sexo</label>
+            {{ form.sexo }}
+        </div>
+        <div class="field padding-bottom--12">
+            <label for="{{ form.telefone.id_for_label }}">Telefone</label>
+            {{ form.telefone }}
+        </div>
+        <div class="field padding-bottom--12 mt-3">
           <input type="submit" name="submit" value="Cadastrar">
         </div>
       </form>
       <div class="footer-link">
         <span>Já tem uma conta? <a href="{% url 'login' %}">Login</a></span>
-        <div class="listing padding-bottom--24 flex-flex center-center" style="margin-top: 20px;">
-          <span><a href="#">© Ateliê</a></span>
-          <span><a href="#">Contato</a></span>
-        </div>
       </div>
     </fieldset>
   </main>

@@ -1,8 +1,9 @@
-import openpyxl
+import openpyxl, os
 
 from datetime import timedelta
 from django.utils import timezone
 from PIL import Image
+from pixqrcodegen import Payload
 
 from django.http import HttpResponse
 from django.contrib import messages
@@ -12,9 +13,10 @@ from django.contrib.auth.models import User
 from django.db.models import Case, Value, When
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.exceptions import PermissionDenied
+from django.core.files import File
 
 from .forms import CadastroCliente, CadastroPedido
-from .models import Cliente, Administrador, Servico, Pedido, ImagemPedido, Roupa, Tecido, Relatorio
+from .models import Cliente, Servico, Pedido, ImagemPedido, Roupa, Tecido, Relatorio, Pix
 
 
 # Funções
@@ -30,6 +32,11 @@ def eh_administrador(user):
 
 def pluralizar(quantidade, singular, plural):
     return f"{quantidade} {singular}" if quantidade == 1 else f"{quantidade} {plural}"
+
+def excluir_payload_temporario():
+    caminho_arquivo = 'pixqrcodegen.png'
+    if os.path.exists(caminho_arquivo):
+        os.remove(caminho_arquivo)
 
 
 # Views
@@ -124,7 +131,7 @@ def dashboard_view(request):
                 for pedido in pedidos_para_excluir:
                     Relatorio.objects.create(
                         cliente=request.user.cliente,
-                        servico=", ".join(pedido.servico.values_list('servico', flat=True)),
+                        servico = ", ".join([s.capitalize() for s in pedido.servico.values_list('servico', flat=True)]),
                         roupa=pedido.roupa,
                         tecido=pedido.tecido,
                         status=pedido.status,
@@ -148,6 +155,36 @@ def dashboard_view(request):
                 filtros_pedidos_salvos = ['todos']
                 request.session['filtros_pedidos'] = ['todos']
                 pedidos_filtrados['isEmpty'] = True
+
+        # Criação de qrcode
+        pedidos = Pedido.objects.filter(cliente=request.user.cliente, status__iexact='concluido')
+        pix_obj = Pix.objects.first() 
+        nome_recebedor = "Administrador"
+
+        if pix_obj:
+            chave_pix = pix_obj.chave
+            cidade_recebedor = "SAO PAULO"
+            for pedido in pedidos:
+                if not pedido.pix_qrcode:
+                    if not pedido.preco or str(pedido.preco).strip() == '':
+                        continue
+
+                    valor = pedido.preco
+                    txt_id = f"PEDIDO{pedido.id}"
+                    
+                    payload = Payload(nome_recebedor, chave_pix, valor, cidade_recebedor, txt_id)
+                    payload.gerarPayload()
+                    
+                    caminho_arquivo_temporario = 'pixqrcodegen.png'
+                    
+                    if os.path.exists(caminho_arquivo_temporario):
+                        with open(caminho_arquivo_temporario, 'rb') as f:
+                            file_name = f"pix_pedido_{pedido.id}.png"
+                            pedido.pix_qrcode.save(file_name, File(f))
+                        
+                        pedido.save()
+                        
+                        excluir_payload_temporario()
         
         # Formatação do nome
         partes = request.user.cliente.nome.lower().split()
@@ -183,6 +220,7 @@ def dashboard_view(request):
             )),
             'filtros_pedidos': filtros_pedidos_salvos,
             'pedidos_com_servicos_indisponiveis': list(Pedido.objects.filter(servico__disponivel=False).distinct().values_list('id', flat=True)),
+            'chave_pix': Pix.objects.first().chave
         }
     else:
         # Filtros
@@ -217,7 +255,7 @@ def dashboard_view(request):
                 for pedido in pedidos_para_excluir:
                     Relatorio.objects.create(
                         cliente=pedido.cliente,
-                        servico=", ".join(pedido.servico.values_list('servico', flat=True)),
+                        servico = ", ".join([s.capitalize() for s in pedido.servico.values_list('servico', flat=True)]),
                         roupa=pedido.roupa,
                         tecido=pedido.tecido,
                         status=pedido.status,
@@ -286,6 +324,7 @@ def dashboard_view(request):
             'tecidos': Tecido.objects.all(),
             'tecidos_indisponiveis': Tecido.objects.filter(disponivel=False),
             'pedidos_com_servicos_indisponiveis': list(Pedido.objects.filter(servico__disponivel=False).distinct().values_list('id', flat=True)),
+            'pix': Pix.objects.first(),
         }
     
     return render(request, 'dashboard.html', context)
@@ -367,7 +406,7 @@ def excluir_pedido_view(request, id):
         if pedido.status not in ['recebido', 'andamento']:
             Relatorio.objects.create(
                 cliente=request.user.cliente,
-                servico=", ".join(pedido.servico.values_list('servico', flat=True)),
+                servico = ", ".join([s.capitalize() for s in pedido.servico.values_list('servico', flat=True)]),
                 roupa=pedido.roupa,
                 tecido=pedido.tecido,
                 status=pedido.status,
@@ -383,7 +422,7 @@ def excluir_pedido_view(request, id):
         if pedido.status not in ['recebido', 'andamento']:
             Relatorio.objects.create(
                 cliente=pedido.cliente,
-                servico=", ".join(pedido.servico.values_list('servico', flat=True)),
+                servico = ", ".join([s.capitalize() for s in pedido.servico.values_list('servico', flat=True)]),
                 roupa=pedido.roupa,
                 tecido=pedido.tecido,
                 status=pedido.status,
@@ -464,6 +503,7 @@ def editar_pedido_view(request, id):
     pedido = get_object_or_404(Pedido, id=id)
     
     try:
+        metodo = request.POST.get('metodo')
         status = request.POST.get('status')
         preco = request.POST.get('preco')
         obs = request.POST.get('observacao')
@@ -475,6 +515,12 @@ def editar_pedido_view(request, id):
 
         if preco:
             pedido.preco = preco
+        else:
+            pedido.preco = '0'
+        
+        if metodo:
+            pedido.forma_pagamento = metodo
+            pedido.status = 'pago'
                 
         pedido.save()
         messages.success(request, f"Pedido atualizado!")
@@ -484,7 +530,7 @@ def editar_pedido_view(request, id):
     return redirect('dashboard')
 
 @login_required(login_url='login')
-def gerar_relatorio(request):
+def gerar_relatorio_view(request):
     try:
         is_cliente = hasattr(request.user, 'cliente')
 
@@ -503,14 +549,14 @@ def gerar_relatorio(request):
 
         if (is_cliente):
             cabecalho = [
-                "Serviço", "Roupa", "Tecido", 
-                "Status", "Data Criação", "Data Finalização", "Preço"
+                "serviço", "roupa", "tecido", 
+                "status", "data_criação", "data_finalização", "preço"
             ]
         else:
             cabecalho = [
-                "Cliente", "sexo", "telefone", 
-                "Serviço", "Roupa", "Tecido", 
-                "Status", "Data Criação", "Data Finalização", "Preço"
+                "cliente", "nome", "sexo", "telefone", 
+                "serviço", "roupa", "tecido", 
+                "status", "data_criação", "data_finalização", "preço"
             ]
         ws.append(cabecalho)
 
@@ -521,9 +567,9 @@ def gerar_relatorio(request):
             if (is_cliente):
                 linha = [
                     pedido.servico,
-                    pedido.roupa,
-                    pedido.tecido,
-                    pedido.status,
+                    pedido.roupa.capitalize(),
+                    pedido.tecido.capitalize(),
+                    pedido.status.capitalize(),
                     data_criacao,
                     data_fim,
                     pedido.preco
@@ -531,12 +577,13 @@ def gerar_relatorio(request):
             else:
                 linha = [
                     pedido.cliente.id,
+                    pedido.cliente.nome.capitalize(),
                     pedido.cliente.sexo,
                     pedido.cliente.telefone,
                     pedido.servico,
-                    pedido.roupa,
-                    pedido.tecido,
-                    pedido.status,
+                    pedido.roupa.capitalize(),
+                    pedido.tecido.capitalize(),
+                    pedido.status.capitalize(),
                     data_criacao,
                     data_fim,
                     pedido.preco
@@ -566,4 +613,25 @@ def cancelar_pedido_view(request, id):
         messages.error(request, f"Ocorreu um erro ao cancelar o pedido!")
 
     messages.success(request, f"Pedido cancelado!")
+    return redirect('dashboard')
+
+@login_required(login_url='login')
+@user_passes_test(eh_administrador)
+def metodo_pagamento_view(request):
+    nome = request.POST.get('nome')
+    chave_pix = request.POST.get('chavePix')
+
+    if nome and chave_pix:
+        try:
+            Pix.objects.all().delete()
+            
+            Pix.objects.create(
+                nome=nome,
+                chave=chave_pix
+            )
+
+            messages.success(request, f"Nova chave pix adicionada!")
+        except:
+            messages.error(request, f"Chave pix não adicionada!")
+
     return redirect('dashboard')

@@ -198,7 +198,14 @@
                         <a class="nav-link" aria-current="page" href="{% url 'relatorio' %}">Gerar relatório</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="{% url 'inicio' %}">Pagamentos</a>
+                        <button 
+                            type="button" 
+                            class="nav-link" 
+                            data-bs-toggle="modal" 
+                            data-bs-target="#modalPagamentos"
+                        >
+                            Pagamentos
+                        </button>
                     </li>
                 </ul>
             </div>
@@ -343,6 +350,43 @@
     </div>
 </div>
 
+<!-- Modal pagamentos -->
+<div class="modal fade" id="modalPagamentos" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Gerenciar Pagamentos</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{% url 'pagamento' %}" id="formularioPagamentos" method="post" autocomplete="off">
+                {% csrf_token %}
+                <div class="modal-body p-4">                  
+                    <div class="row g-3">
+                        <div class="border border-secondary-subtle rounded-3 p-3 bg-light shadow-sm mb-4">
+                            <div class="form-label fw-semibold text-secondary">Método de pagamento</div>
+
+                            <label for="nome" class="form-label fw-semibold text-secondary small">Nome</label>
+                            <input type="text" class="form-control" id="nome" name="nome" placeholder="Informe um nome">
+
+                            <label for="chave_Pix" class="form-label fw-semibold text-secondary small">Pix</label>
+                            <input type="text" class="form-control" id="chave_Pix" name="chavePix" placeholder="Informe a chave Pix">
+                        </div>
+                        {% if pix %}
+                            <div class="border border-secondary-subtle rounded-3 p-3 bg-light shadow-sm mb-4">
+                                <div class="form-label fw-semibold text-secondary">Pix cadastrado</div>
+                                <h5>{{ pix.nome|capfirst }} <span class="badge text-bg-secondary">{{ pix.chave }}</span></h5>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="modal-footer bg-light border-top-0 d-flex w-100 gap-2 m-0 p-3">
+                    <button type="submit" class="btn btn-primary col">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 {% for pedido in pedidos %}
     <!-- Modal visualizar pedido -->
     <div class="modal fade" id="modalVerPedido{{ pedido.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
@@ -470,13 +514,25 @@
                     {% csrf_token %}
                     <div class="modal-body p-4">                  
                         <div class="row g-3">
+                            {% if pedido.status in 'concluido' %}
+                                <div class="border border-secondary-subtle rounded-3 p-3 bg-light shadow-sm mb-4">
+                                    <div class="form-label fw-semibold text-secondary">Metódo de pagamento</div>
+                                    <select name="metodo" class="form-select" aria-label="Pagamento">
+                                        <option value="" selected>Padrão</option>
+                                        <option value="dinheiro">Dinheiro</option>
+                                        <option value="pix">Pix</option>
+                                    </select>
+                                </div>
+                            {% endif %}
                             <div class="border border-secondary-subtle rounded-3 p-3 bg-light shadow-sm mb-4">
                                 <div class="form-label fw-semibold text-secondary">Definir a situação</div>
                                 <select name="status" class="form-select" aria-label="Status do pedido">
-                                    <option value="recebido" {% if pedido.status == 'recebido' %}selected{% endif %}>Recebido</option>
-
-                                    <option value="andamento" {% if pedido.status == 'andamento' %}selected{% endif %}>Andamento</option>
-                                    
+                                    {% if pedido.status not in 'concluido' %}
+                                        {% if pedido.status not in 'andamento' %}
+                                            <option value="recebido" {% if pedido.status == 'andamento' %}selected{% endif %}>Recebido</option>
+                                        {% endif %}
+                                        <option value="andamento" {% if pedido.status == 'andamento' %}selected{% endif %}>Andamento</option>
+                                    {% endif %}
                                     <option value="concluido" {% if pedido.status == 'concluido' %}selected{% endif %}>Concluído</option>
                                     
                                     <option value="pago" {% if pedido.status == 'pago' %}selected{% endif %}>Pago</option>
@@ -500,6 +556,7 @@
                                             min="0" 
                                             value={{ pedido.preco }}
                                             aria-describedby="addon-wrapper"
+                                            {% if pedido.status in 'concluido' %}disabled{% endif %}
                                             style="border-color: rgba(43, 122, 90, 0.25); transition: all 0.2s ease;">
                                     </div>
                                 </div>
@@ -702,7 +759,7 @@
                                                 </small>
                                             </p>
                                             <div class="d-flex flex-column-reverse flex-sm-row gap-2 flex-wrap mt-auto">
-                                                {% if grupo.grouper in 'pago concluido' %}
+                                                {% if grupo.grouper in 'pago' %}
                                                     <button type="button" 
                                                         class="btn d-inline-flex align-items-center justify-content-center" 
                                                         data-bs-toggle="modal" 
@@ -770,7 +827,7 @@
                                                     <span class="text-uppercase small tracking-wider fw-bold text-secondary" style="font-size: 0.75rem; letter-spacing: 0.5px;">
                                                         Preço
                                                     </span>
-                                                    {% if pedido.preco %}
+                                                    {% if pedido.preco and not pedido.preco == '0' and grupo.grouper not in 'pago' %}
                                                         <span class="badge rounded-pill fw-semibold text-dark px-3 py-1.5 d-inline-flex align-items-center gap-2" 
                                                             style="background-color: rgba(255, 193, 7, 0.2); border: 1px solid rgba(255, 193, 7, 0.3); font-size: 0.75rem;">
                                                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-clock align-middle" viewBox="0 0 16 16">
@@ -785,7 +842,7 @@
                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16">
                                                                     <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425z"/>
                                                                 </svg>
-                                                                Pago
+                                                                R$ {{ pedido.preco }}
                                                             </span>
                                                         {% else %}
                                                             <span class="badge rounded-pill fw-medium px-2.5 py-1" style="background-color: rgba(0, 0, 0, 0.08); color: #666; font-size: 0.8rem;">

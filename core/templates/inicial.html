@@ -25,18 +25,31 @@
     
         <div class="page">
         
-        <header class="fixed-top">
-            <h3>Ateliê</h3>
+        <header>
+            <div class="titulo-container">
+                <h3 class="titulo-atelie logo">Ateliê</h3>
+            </div>
             <div>
                 {% if user.is_authenticated %}
-                    <a href="{% url 'dashboard' %}">
-                        <button type="button" class="btn btn-primary">Página dashboard</button>
-                    </a>
-                    <a href="{% url 'deslogar' %}">
-                        <button type="button" class="btn btn-danger">Sair</button>
-                    </a>
+                    <div class="d-flex flex-column flex-sm-row gap-3">
+                        <div class="box-button">
+                            <a 
+                                href="{% url 'dashboard' %}" 
+                                data-texto="Menu" 
+                                style="--cor-botao: #6F52ED;">
+                            </a>
+                        </div>
+
+                        <div class="box-button">
+                            <a 
+                                href="{% url 'deslogar' %}" 
+                                data-texto="Sair" 
+                                style="--cor-botao: #E05368;">
+                            </a>
+                        </div>
+                    </div>
                 {% else %}
-                    <div class="d-flex">
+                    <div class="d-flex flex-column flex-sm-row gap-3">
                         <div class="box-button">
                             <a 
                                 href="{% url 'login' %}" 
@@ -52,7 +65,6 @@
                                 style="--cor-botao: #198754;">
                             </a>
                         </div>
-                        
                     </div>
                 {% endif %}
             </div>
@@ -62,48 +74,55 @@
         <section class="section swiper-container swiper-slider swiper-slider-1 slider-scale-effect" data-loop="false" data-autoplay="5500" data-simulate-touch="false" data-slide-effect="fade">
             <div class="swiper-wrapper">
             <div class="swiper-slide slide-bg-1">
-                <div class="slide-bg swiper-white-filter" style="background-image: url(&quot;{% static 'imgs/page_inicial/plano1.jpg' %}&quot;)"></div>
+                <div class="slide-bg swiper-white-filter" style="background-image: url(&quot;{% static 'imgs/plano1.jpg' %}&quot;)"></div>
                 <div class="swiper-slide-caption section-md">
-                <div class="container">
-                    <div class="row">
-                    <div class="col-sm-10 col-lg-8 col-xl-7">
-                        <h1 class="heading-decorate" data-caption-animate="fadeInUp" data-caption-delay="100">Descubra a praticidade<br><span class="divider"></span>cuide da sua beleza.
-                        </h1>
-                        <p class="lead" data-caption-animate="fadeInUp" data-caption-delay="250">Não perca mais tempo procurando salões de beleza. conheça nossos parceiros e tenha acesso a diversos serviços de beleza em um só lugar.</p>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-sm-10 col-lg-8 col-xl-7 text-white" style="color: #ffffff;">
+                                <h1 class="heading-decorate text-white" data-caption-animate="fadeInUp" data-caption-delay="100" style="color: #ffffff;">
+                                    Descubra a exclusividade<br><span class="divider"></span>vista a sua essência.
+                                </h1>
+                                <p class="lead text-white" data-caption-animate="fadeInUp" data-caption-delay="250" style="color: #ffffff;">
+                                    Não perca mais tempo procurando o estilo perfeito. Conheça as criações do nosso ateliê e tenha acesso a peças sob medida e designs únicos em um só lugar.
+                                </p>
+                            </div>
+                        </div>
                     </div>
-                    </div>
-                </div>
                 </div>
             </div>
             <div class="swiper-slide slide-bg-2">
-                <div class="slide-bg swiper-white-filter" style="background-image: url(&quot;{% static 'imgs/page_inicial/plano2.jpg' %}&quot;)"></div>
+                <div class="slide-bg swiper-white-filter" style="background-image: url(&quot;{% static 'imgs/plano2.jpg' %}&quot;)"></div>
                 <div class="swiper-slide-caption section-md">
-                <div class="container">
-                    <div class="row">
-                    <div class="col-md-10 col-lg-8 col-xl-7">
-                        <h1 class="heading-decorate" data-caption-animate="fadeInUp" data-caption-delay="100">Experimente o melhor <br><span class="divider"></span>serviço de salões
-                        </h1>
-                        <p class="lead" data-caption-animate="fadeInUp" data-caption-delay="250">Oferecemos uma gama completa de serviços de beleza. Confie sua beleza a profissionais que realmente se importam com o seu estilo e visual!</p>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-10 col-lg-8 col-xl-7 text-white" style="color: #ffffff;">
+                                <h1 class="heading-decorate text-white" data-caption-animate="fadeInUp" data-caption-delay="100" style="color: #ffffff;">
+                                    Sinta a perfeição<br><span class="divider"></span>de cada detalhe.
+                                </h1>
+                                <p class="lead text-white" data-caption-animate="fadeInUp" data-caption-delay="250" style="color: #ffffff;">
+                                    Oferecemos serviços completos de alta costura, modelagem e ajustes finos. Confie suas roupas a quem realmente entende de caimento, elegância e acabamento impecável!
+                                </p>
+                            </div>
+                        </div>
                     </div>
-                    </div>
-                </div>
                 </div>
             </div>
             <div class="swiper-slide slide-bg-3">
-                <div class="slide-bg swiper-white-filter" style="background-image: url(&quot;{% static 'imgs/page_inicial/plano3.jpg' %}&quot;)"></div>
+                <div class="slide-bg swiper-white-filter" style="background-image: url(&quot;{% static 'imgs/plano3.jpg' %}&quot;)"></div>
                 <div class="swiper-slide-caption section-md">
-                <div class="container">
-                    <div class="row">
-                    <div class="col-md-10 col-lg-8 col-xl-7">
-                        <h1 class="heading-decorate" data-caption-animate="fadeInUp" 
-                        data-caption-delay="100">Diversos salões<br><span class="divider"></span>especializados
-                        </h1>
-                        <p class="lead" data-caption-animate="fadeInUp" data-caption-delay="250">Mude sua aparência e renove sua autoestima em nossos salões de belezas especializados em diversas áreas.</p>
-                    </div>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-10 col-lg-8 col-xl-7 text-white" style="color: #ffffff;">
+                                <h1 class="heading-decorate text-white" data-caption-animate="fadeInUp" data-caption-delay="100" style="color: #ffffff;">
+                                    Modelagens únicas<br><span class="divider"></span>e tecidos nobres.
+                                </h1>
+                                <p class="lead text-white" data-caption-animate="fadeInUp" data-caption-delay="250" style="color: #ffffff;">
+                                    Dê vida às suas ideias e expresse sua identidade com designs feitos sob medida para valorizar sua silhueta e elevar sua autoconfiança.
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                </div>
-            </div>
             </div>
             <!-- Swiper Pagination-->
             <div class="swiper-pagination"></div>
@@ -145,14 +164,14 @@
                     <div class="col-lg-6 text-center">
                         <div class="block-parallax-element">
                             <span class="prev-element" data-parallax-scroll="{&quot;y&quot;: -30, &quot;x&quot;: 0,  &quot;smoothness&quot;: 50 }"></span>
-                            <img src="{% static 'imgs/page_inicial/salao.jpg' %}" alt="" width="378" height="463"/>
+                            <img src="{% static 'imgs/sobre_nos.jpg' %}" alt="" width="378" height="463"/>
                             <span class="next-element" data-parallax-scroll="{&quot;y&quot;: 30, &quot;x&quot;: 0,  &quot;smoothness&quot;: 50 }"></span>
                         </div>
                     </div>
                     <div class="col-lg-6 col-xl-5">
                         <h2 class="heading-decorate"><span class="divider"></span>Sobre nós</h2>
                         <p class="big text-gray-800">
-                            O site de gerenciamento de salões de beleza foi desenvolvido com o objetivo de conectar clientes a salões de beleza de qualidade. Nosso foco é facilitar a busca pelos melhores salões especializados, assegurando que você obtenha os serviços necessários para se sentir e parecer incrível.
+                            O nosso ateliê nasceu com o propósito de transformar ideias em realidade e criar conexões reais através da moda sob medida. Nosso foco é oferecer um atendimento personalizado e exclusivo, unindo técnicas tradicionais de costura, modelagens impecáveis e tecidos de alta qualidade para garantir que cada peça expresse perfeitamente a sua essência e estilo.
                         </p>
                     </div>
                 </div>
@@ -164,10 +183,10 @@
                 <div class="row row-50 align-items-lg-center justify-content-xl-between">
                     <div class="col-lg-6">
                     <div class="block-xs">
-                        <h2 class="heading-decorate">Realizar<br><span class="divider"></span>Agendamentos
+                        <h2 class="heading-decorate">Realizar<br><span class="divider"></span>Pedidos
                         </h2>
                         <p class="big text-gray-800">
-                            Agendar os serviços que você precisa em um salão de beleza próximo fica mais fácil. Basta visualizar os serviços disponíveis e marcar o horário que melhor se adequa à sua agenda. Com o sistema de agendamento online, é possível agendar seus serviços de beleza a qualquer hora e em qualquer lugar, tanto para homens quanto para mulheres.
+                            Encomendar as peças e serviços exclusivos do nosso ateliê ficou muito mais simples. Basta navegar pelo nosso catálogo, escolher as opções desejadas e fazer o seu pedido de forma prática. Com o nosso sistema online, você pode solicitar suas peças personalizadas e sob medida a qualquer hora e de qualquer lugar.
                         </p>
                     </div>
                     </div>
@@ -175,11 +194,11 @@
                     <div class="box-images-classic">
                         <div class="row row-30">
                         <div class="col-6">
-                            <div class="box-image-item" data-parallax-scroll="{&quot;y&quot;: 0, &quot;x&quot;: -20,  &quot;smoothness&quot;: 30 }"><img src="{% static 'imgs/page_inicial/homem.jpg' %}" alt="" width="270" height="458"/>
+                            <div class="box-image-item" data-parallax-scroll="{&quot;y&quot;: 0, &quot;x&quot;: -20,  &quot;smoothness&quot;: 30 }"><img src="{% static 'imgs/pedido_homem.jpg' %}" alt="" width="270" height="458"/>
                             </div>
                         </div>
                         <div class="col-6">
-                            <div class="box-image-item" data-parallax-scroll="{&quot;y&quot;: 0, &quot;x&quot;: 20,  &quot;smoothness&quot;: 30 }"><img src="{% static 'imgs/page_inicial/mulher.jpg' %}" alt="" width="270" height="458"/>
+                            <div class="box-image-item" data-parallax-scroll="{&quot;y&quot;: 0, &quot;x&quot;: 20,  &quot;smoothness&quot;: 30 }"><img src="{% static 'imgs/pedido_mulher.jpg' %}" alt="" width="270" height="458"/>
                             </div>
                         </div>
                         </div>
@@ -191,74 +210,115 @@
     
         <section class="section section-md bg-default text-center">
             <div class="container">
-            <h2>Alguns serviços que pode encontrar</h2>
+                <h2>Serviços</h2>
             <div class="divider-lg"></div>
-            <p class="block-lg">
-                Você encontrará uma ampla gama de serviços de beleza oferecidos por salões especializados em diversas áreas. Desde cortes de cabelo até manicure e pedicure, entre outros. Explore todas as opções disponíveis e agende seu próximo tratamento de beleza agora mesmo.
-            </p>
+                <p class="block-lg">
+                    Você encontrará uma ampla gama de serviços de costura e design de moda oferecidos por nosso ateliê especializado. Desde confecção sob medida até ajustes finos, reformas de roupas e consultoria de estilo, entre outros. Explore todas as opções disponíveis e agende sua primeira prova ou atendimento personalizado agora mesmo.
+                </p>
             </div>
+            <!--
             <div class="container">
-            <div class="row row-20">
-                <div class="col-12">
-                <!-- Owl Carousel-->
-                <div class="owl-carousel owl-carousel-center" data-items="1" data-md-items="3" data-xl-items="5" data-dots="false" data-nav="true" data-stage-padding="0" data-loop="true" data-margin="0" data-mouse-drag="false" data-center="true" data-autoplay="true" style="touch-action: none;">
-                    <div class="team-minimal">
-                    <figure><img src="{% static 'imgs/page_inicial/unhas.jpg' %}" alt="" width="380" height="380"></figure>
-                    <div class="team-minimal-caption">
-                        <h4 class="team-title">Manicure e pedicure</h4>
-                        <p>Procure entre os serviços disponiveis</p>
-                    </div>
-                    </div>
-                    <div class="team-minimal">
-                    <figure><img src="{% static 'imgs/page_inicial/pets.jpg' %}" alt="" width="380" height="380"></figure>
-                    <div class="team-minimal-caption">
-                        <h4 class="team-title">Dê um up no seu pet</h4>
-                        <p>Encontre salões especializados em pets</p>
-                    </div>
-                    </div>
-                    <div class="team-minimal">
-                    <figure><img src="{% static 'imgs/page_inicial/sobrancelhas.jpg' %}" alt="" width="380" height="380"></figure>
-                    <div class="team-minimal-caption">
-                        <h4 class="team-title">Sobrancelhas</h4>
-                        <p>Design de sobrancelhas</p>
-                    </div>
-                    </div>
-                    <div class="team-minimal">
-                    <figure><img src="{% static 'imgs/page_inicial/corte-cabelo.jpg' %}" alt="" width="380" height="380"></figure>
-                    <div class="team-minimal-caption">
-                        <h4 class="team-title">Cortes de cabelo</h4>
-                        <p>Renove seu visual com cortes estilosos</p>
-                    </div>
-                    </div>
-                    <div class="team-minimal">
-                    <figure><img src="{% static 'imgs/page_inicial/maquiagem.jpg' %}" alt="" width="380" height="380"></figure>
-                    <div class="team-minimal-caption">
-                        <h4 class="team-title">Maquiagem</h4>
-                        <p>Realce sua beleza com maquiagens</p>
-                    </div>
-                    </div>
-                    <div class="team-minimal">
-                    <figure><img src="{% static 'imgs/page_inicial/penteados.jpg' %}" alt="" width="380" height="380"></figure>
-                    <div class="team-minimal-caption">
-                        <h4 class="team-title">Coloração e penteados</h4>
-                        <p>Dê vida ao seu cabelo, masculino ou feminino</p>
-                    </div>
-                    </div>
-                    <div class="team-minimal">
-                    <figure><img src="{% static 'imgs/page_inicial/tatuagens.jpg' %}" alt="" width="380" height="380"></figure>
-                    <div class="team-minimal-caption">
-                        <h4 class="team-title">Tatuagens</h4>
-                        <p>Encontre salões especializados em tatuagens</p>
+                <div class="row row-20">
+                    <div class="col-12">
+                    <div class="owl-carousel owl-carousel-center" data-items="1" data-md-items="3" data-xl-items="5" data-dots="false" data-nav="true" data-stage-padding="0" data-loop="true" data-margin="0" data-mouse-drag="false" data-center="true" data-autoplay="true" style="touch-action: none;">
+                        <div class="team-minimal">
+                        <figure><img src="https://placehold.co/380x380" alt="" width="380" height="380"></figure>
+                        <div class="team-minimal-caption">
+                            <h4 class="team-title">Titulo</h4>
+                            <p>Descrição breve</p>
+                        </div>
+                        </div>
+                        <div class="team-minimal">
+                        <figure><img src="{% static 'imgs/plano1.jpg' %}" alt="" width="380" height="380"></figure>
+                        <div class="team-minimal-caption">
+                            <h4 class="team-title">Titulo</h4>
+                            <p>Descrição breve</p>
+                        </div>
+                        </div>
+                        <div class="team-minimal">
+                        <figure><img src="{% static 'imgs/plano1.jpg' %}" alt="" width="380" height="380"></figure>
+                        <div class="team-minimal-caption">
+                            <h4 class="team-title">Titulo</h4>
+                            <p>Descrição breve</p>
+                        </div>
+                        </div>
+                        <div class="team-minimal">
+                        <figure><img src="{% static 'imgs/plano1.jpg' %}" alt="" width="380" height="380"></figure>
+                        <div class="team-minimal-caption">
+                            <h4 class="team-title">Titulo</h4>
+                            <p>Descrição breve</p>
+                        </div>
+                        </div>
+                        <div class="team-minimal">
+                        <figure><img src="{% static 'imgs/plano1.jpg' %}" alt="" width="380" height="380"></figure>
+                        <div class="team-minimal-caption">
+                            <h4 class="team-title">Titulo</h4>
+                            <p>Descrição breve</p>
+                        </div>
+                        </div>
+                        <div class="team-minimal">
+                        <figure><img src="{% static 'imgs/plano1.jpg' %}" alt="" width="380" height="380"></figure>
+                        <div class="team-minimal-caption">
+                            <h4 class="team-title">Titulo</h4>
+                            <p>Descrição breve</p>
+                        </div>
+                        </div>
+                        <div class="team-minimal">
+                        <figure><img src="{% static 'imgs/plano1.jpg' %}" alt="" width="380" height="380"></figure>
+                        <div class="team-minimal-caption">
+                            <h4 class="team-title">Titulo</h4>
+                            <p>Descrição breve</p>
+                        </div>
+                        </div>
                     </div>
                     </div>
                 </div>
-                </div>
             </div>
-            </div>
-        </section>
-        
-          
+            -->
+        </section> 
     </main>
+
+    <footer class="atelier-footer">
+        <div class="footer-container">
+            <div class="footer-column about">
+                <h3 class="footer-logo logo">Ateliê<span>.</span></h3>
+                <p>Criando peças únicas, repletas de afeto e detalhes feitos à mão para transformar os seus momentos mais especiais.</p>
+            </div>
+            <div class="footer-column links">
+                <h4>Navegação</h4>
+                <ul>
+                    <li><a href="#home">Início</a></li>
+                    <li><a href="#produtos">Coleções</a></li>
+                    <li><a href="#sobre">Nossa História</a></li>
+                    <li><a href="#contato">Fale Conosco</a></li>
+                </ul>
+            </div>
+            <div class="footer-column contact">
+                <h4>Contato</h4>
+                <ul class="contact-info">
+                    <li>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt" viewBox="0 0 16 16"><path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A32 32 0 0 1 8 14.58a32 32 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10"/><path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4m0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/></svg>
+                        <span>Pombal, PB</span>
+                    </li>
+                    <li>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-whatsapp" viewBox="0 0 16 16"><path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c1.1-4.2 4.566-7.627 8.748-7.627a6.58 6.58 0 0 1 4.66 1.931 6.58 6.58 0 0 1 1.928 4.66c-.004 4.195-3.424 7.619-7.598 7.619z"/></svg>
+                        <a href="https://wa.me/seu-numero" target="_blank">(83) 99999-9999</a>
+                    </li>
+                </ul>
+                <div class="social-icons">
+                    <a href="#" aria-label="Instagram">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-instagram" viewBox="0 0 16 16"><path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.9 3.9 0 0 0-1.417.923A3.9 3.9 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.9 3.9 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.9 3.9 0 0 0-.923-1.417A3.9 3.9 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599.28.28.453.546.598.92.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.5 2.5 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.5 2.5 0 0 1-.92-.598 2.5 2.5 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233s.008-2.388.046-3.231c.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92.28-.28.546-.453.92-.598.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92m-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217m0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334"/></svg>
+                    </a>
+                    <a href="#" aria-label="Pinterest">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-pinterest" viewBox="0 0 16 16"><path d="M8 0a8 8 0 0 0-2.915 15.452c-.07-.633-.134-1.606.027-2.297.146-.625.938-3.977.938-3.977s-.239-.479-.239-1.187c0-1.113.645-1.943 1.448-1.943.682 0 1.012.512 1.012 1.127 0 .686-.437 1.712-.663 2.663-.188.796.4 1.446 1.185 1.446 1.422 0 2.515-1.5 2.515-3.664 0-1.915-1.377-3.254-3.342-3.254-2.276 0-3.612 1.707-3.612 3.471 0 .688.265 1.425.595 1.826a.24.24 0 0 1 .056.23c-.061.252-.196.796-.222.907-.035.146-.116.177-.268.107-1-.465-1.624-1.926-1.624-3.1 0-2.523 1.834-4.84 5.286-4.84 2.775 0 4.932 1.977 4.932 4.62 0 2.757-1.739 4.976-4.152 4.976-.811 0-1.573-.421-1.834-.919l-.498 1.902c-.181.695-.669 1.566-.995 2.097A8 8 0 1 0 8 0"/></svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Ateliê. Todos os direitos reservados.</p>
+        </div>
+    </footer>
     
 {% endblock content %}
 
