@@ -350,6 +350,38 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal pagamento pedido -->
+    {% if pedido.status in 'concluido' %}
+        <div class="modal fade" id="modalPagamento{{ pedido.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Realizar pagamento</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <div class="mb-4 text-center p-3 border border-dashed rounded bg-light">
+                            <img 
+                                src="{{ pedido.pix_qrcode.url }}" 
+                                class="galeria-img" 
+                                style="width: 250px; height: auto;"
+                                alt="Qrcode" 
+                                draggable="false"
+                                oncontextmenu="return false;"
+                            >
+                            <h4>Pix: <span class="badge text-bg-secondary">{{ chave_pix }}</span></h4>
+                        </div>
+                    </div>
+                        <div class="modal-footer bg-light border-top-0 d-flex w-100 gap-2 m-0 p-3">
+                            <button type="button" class="btn btn-secondary flex-fill" data-bs-dismiss="modal">
+                                Fechar
+                            </button>
+                        </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 {% endfor %}
 
 <main class="
@@ -578,21 +610,21 @@
                                                     <span class="text-uppercase small tracking-wider fw-bold text-secondary" style="font-size: 0.75rem; letter-spacing: 0.5px;">
                                                         Preço
                                                     </span>
-                                                    {% if pedido.preco %}
-                                                        <a href="#" class="btn btn-success fs-6 d-inline-flex align-items-center justify-content-center gap-2">
+                                                    {% if pedido.preco and not pedido.preco == '0' and grupo.grouper not in 'pago' %}
+                                                        <button type="button" class="btn btn-success fs-6 d-inline-flex align-items-center justify-content-center gap-2" data-bs-toggle="modal" data-bs-target="#modalPagamento{{ pedido.id }}">
                                                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-credit-card-2-back" viewBox="0 0 16 16">
                                                                 <path d="M11 5.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5zm-2 2a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5z"/>
                                                                 <path d="M2 2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm13 2v5H1V4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1m-1 9H2a1 1 0 0 1-1-1v-1h14v1a1 1 0 0 1-1 1"/>
                                                             </svg>
                                                             Pagar R$ {{ pedido.preco }}
-                                                        </a>
+                                                        </button>
                                                     {% else %}
                                                         {% if grupo.grouper in 'pago' %}
                                                             <span class="fw-bold fs-5 d-inline-flex align-items-center gap-1" style="color: #2b7a5a;">
                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16">
                                                                     <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425z"/>
                                                                 </svg>
-                                                                Pago
+                                                                R$ {{ pedido.preco }}
                                                             </span>
                                                         {% else %}
                                                             <span class="badge rounded-pill fw-medium px-2.5 py-1" style="background-color: rgba(0, 0, 0, 0.08); color: #666; font-size: 0.8rem;">

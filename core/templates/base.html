@@ -7,6 +7,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-aFq/bzH65dt+w6FI2ooMVUpc+21e0SRygnTpmBvdBgSdnuTN7QbdgL+OapgHtvPp" crossorigin="anonymous">
     <link rel="shortcut icon" href="{% static 'imgs/favicon.ico' %}" type="image/x-icon">
+    <style>
+        .logo{
+            font-family: 'Playfair Display', 'Didot', 'Georgia', serif; 
+            font-size: 2.2rem; 
+            font-weight: 400; 
+            text-transform: uppercase; 
+            letter-spacing: 4px;
+        }
+    </style>
     {% block css %}{% endblock css %}
     {% block title %}<title></title>{% endblock title %}
 </head>
@@ -19,9 +28,7 @@
         integrity="sha384-qKXV1j0HvMUeCBQ+QVp7JcfGl760yU08IQ+GpUo5hlbpg51QRiuqHAJz8+BrxE/N" 
         crossorigin="anonymous"
     ></script>
-    <script 
-        src="https://code.jquery.com/jquery-4.0.0.min.js"
-    ></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script>
         // Adicionar mensagens toasts
         $(document).ready(function() {
@@ -32,6 +39,27 @@
                 toastBootstrap.show();
             }
         });
+        
+        // Ativar e desativar visualização de senha
+        function toggleSenha() {
+            const inputSenha = document.getElementById('input-senha');
+            const iconeOlho = document.getElementById('icone-olho');
+            
+            const olhoAberto = `<path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"/><path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/>`;
+
+            const olhoFechado = `
+            <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"/>
+            <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/>
+            <path d="M1 1l14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none" />`;
+
+            if (inputSenha.type === 'password') {
+                inputSenha.type = 'text';
+                iconeOlho.innerHTML = olhoFechado;
+            } else {
+                inputSenha.type = 'password';
+                iconeOlho.innerHTML = olhoAberto;
+            }
+        }
     </script>
     
     {% block script %}{% endblock script %}

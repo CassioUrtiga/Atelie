@@ -9,6 +9,9 @@ from django.db.models.signals import pre_delete
 def get_file_path_pedido(instance, filename):
     return os.path.join("img_pedidos", f"{uuid.uuid4()}.{filename.split('.')[-1]}")
 
+def get_file_path_pix(instance, filename):
+    return os.path.join("img_qrcodes", f"{uuid.uuid4()}.{filename.split('.')[-1]}")
+
 
 class Cliente(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -78,6 +81,17 @@ class Roupa(models.Model):
     def __str__(self) -> str:
         return self.roupa
 
+class Pix(models.Model):
+    nome = models.CharField(max_length=100, null=False, default="")
+    chave = models.TextField(blank=False, null=False, default="")
+
+    class Meta:
+        verbose_name = "pix"
+        verbose_name_plural = "pix"
+
+    def __str__(self) -> str:
+        return f"Pix {self.id}"
+
 class Pedido(models.Model):
     cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
     servico = models.ManyToManyField(Servico)
@@ -87,9 +101,11 @@ class Pedido(models.Model):
     data_conclusao = models.DateTimeField()
     detalhes = models.TextField(blank=True, null=True)
     observacao = models.TextField(blank=True, null=True, default="")
-    preco = models.CharField(max_length=10, default="")
     status = models.CharField(max_length=20, default="recebido")
     atualizacao_status = models.DateTimeField(auto_now=True)
+    preco = models.CharField(max_length=10, default="")
+    forma_pagamento = models.CharField(max_length=50, default="")
+    pix_qrcode = StdImageField('Pix qrcode', upload_to=get_file_path_pix, blank=True, null=True, default=None)
     img = models.ManyToManyField(ImagemPedido)
     
     class Meta:
@@ -130,3 +146,11 @@ def pedido_delete_img(sender, instance, **kwargs):
                     pass
         imagem_obj.delete()
 
+@receiver(pre_delete, sender=Pedido)
+def pedido_delete_qrcode(sender, instance, **kwargs):
+    if instance.pix_qrcode and hasattr(instance.pix_qrcode, 'path'):
+        try:
+            if os.path.isfile(instance.pix_qrcode.path):
+                os.remove(instance.pix_qrcode.path)
+        except ValueError:
+            pass

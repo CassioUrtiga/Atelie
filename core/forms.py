@@ -14,7 +14,7 @@ class CadastroCliente(forms.ModelForm):
             'id': 'nome',
             'name': 'nome',
             'class': 'form-control',
-            'placeholder': 'Seu nome',
+            'placeholder': 'Nome completo',
         })
     )
 
@@ -30,7 +30,7 @@ class CadastroCliente(forms.ModelForm):
         max_length=12, 
         required=True, 
         widget=forms.PasswordInput(attrs={
-            'id': 'senha',
+            'id': 'input-senha',
             'type': 'password',
             'name': 'senha',
             'class': 'form-control',
