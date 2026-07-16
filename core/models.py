@@ -123,6 +123,7 @@ class Relatorio(models.Model):
     status = models.CharField(max_length=20)
     data_criado_pedido = models.DateTimeField()
     data_finalizado_pedido = models.DateTimeField()
+    forma_pagamento = models.CharField(max_length=50, default="")
     preco = models.CharField(max_length=10)
     
     class Meta:

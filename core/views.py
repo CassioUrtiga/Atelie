@@ -339,6 +339,8 @@ def cadastrar_pedido_view(request):
         pedido.cliente = request.user.cliente
         pedido.save()
 
+        form_pedido.save_m2m()
+
         imagens_invalidas = 0
         total_imagens = 0
 
@@ -385,10 +387,6 @@ def cadastrar_pedido_view(request):
 
             messages.info(request, f'Pedido realizado! {msg_validas} e {msg_invalidas}.')
             return redirect('dashboard')
-        
-        # Cenário C: 100% de sucesso (todas válidas)
-        if imagens_invalidas == 0:
-            form_pedido.save_m2m()
         
         messages.success(request, 'Novo pedido realizado!')
         return redirect('dashboard')
@@ -550,13 +548,15 @@ def gerar_relatorio_view(request):
         if (is_cliente):
             cabecalho = [
                 "serviço", "roupa", "tecido", 
-                "status", "data_criação", "data_finalização", "preço"
+                "status", "data_criação", "data_finalização", 
+                "forma_pagamento", "preço"
             ]
         else:
             cabecalho = [
                 "cliente", "nome", "sexo", "telefone", 
                 "serviço", "roupa", "tecido", 
-                "status", "data_criação", "data_finalização", "preço"
+                "status", "data_criação", "data_finalização", 
+                "forma_pagamento", "preço"
             ]
         ws.append(cabecalho)
 
@@ -572,6 +572,7 @@ def gerar_relatorio_view(request):
                     pedido.status.capitalize(),
                     data_criacao,
                     data_fim,
+                    pedido.forma_pagamento,
                     pedido.preco
                 ]
             else:
@@ -586,6 +587,7 @@ def gerar_relatorio_view(request):
                     pedido.status.capitalize(),
                     data_criacao,
                     data_fim,
+                    pedido.forma_pagamento,
                     pedido.preco
                 ]
 
