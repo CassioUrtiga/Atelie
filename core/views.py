@@ -357,6 +357,8 @@ def cadastrar_pedido_view(request):
                     with Image.open(imagem) as img_teste:
                         img_teste.verify()
                     
+                    imagem.seek(0)
+                    
                     nova_imagem_objeto = ImagemPedido()
                     nova_imagem_objeto.img.save(imagem.name, imagem)
                 
