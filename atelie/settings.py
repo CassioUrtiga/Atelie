@@ -2,6 +2,14 @@ from pathlib import Path
 from decouple import config
 import os
 import dj_database_url
+import cloudinary
+
+cloudinary.config(
+    cloud_name=config('CLOUD_NAME'),
+    api_key=config('CLOUD_API_KEY'),
+    api_secret=config('CLOUD_API_SECRET'),
+    secure=True
+)
 
 # Tipo de ambiente de desenvolvimento (local, production, workflow)
 development = config('DEVELOPMENT')
@@ -25,12 +33,14 @@ else:
 
 # Application definition
 INSTALLED_APPS = [
+    'cloudinary_storage',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'cloudinary',
     'corsheaders',
     'core',
 ]
@@ -50,6 +60,18 @@ ROOT_URLCONF = 'atelie.urls'
 
 if development == 'production':
     CSRF_TRUSTED_ORIGINS = [config('ORIGIN')]
+
+STORAGES = {
+    "default": {
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "cloudinary_storage.storage.StaticCloudinaryStorage", 
+    },
+}
+
+STATICFILES_STORAGE = "cloudinary_storage.storage.StaticHashedCloudinaryStorage"
+DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
 
 TEMPLATES = [
     {
