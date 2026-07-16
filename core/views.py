@@ -359,13 +359,13 @@ def cadastrar_pedido_view(request):
                     
                     imagem.seek(0)
                     
-                    nova_imagem_objeto = ImagemPedido()
-                    nova_imagem_objeto.img.save(imagem.name, imagem)
+                    nova_imagem_objeto = ImagemPedido(img=imagem)
+                    nova_imagem_objeto.save()
                 
                     pedido.img.add(nova_imagem_objeto)
                 except Exception:
                     imagens_invalidas += 1
-        except Exception as e:
+        except Exception:
             messages.error(request, 'Problema no envio da imagem!')
             return redirect('dashboard')
         
