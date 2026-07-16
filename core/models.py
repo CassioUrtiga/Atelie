@@ -1,20 +1,20 @@
-import uuid
-import os
+#import uuid
+#import os
+#from stdimage.models import StdImageField
+
 from django.db import models
 from django.contrib.auth.models import User
-
-from stdimage.models import StdImageField
 from django.dispatch import receiver
 from django.db.models.signals import pre_delete
 
 from cloudinary.models import CloudinaryField
 import cloudinary.uploader
 
-def get_file_path_pedido(instance, filename):
-    return os.path.join("img_pedidos", f"{uuid.uuid4()}.{filename.split('.')[-1]}")
+#def get_file_path_pedido(instance, filename):
+    #return os.path.join("img_pedidos", f"{uuid.uuid4()}.{filename.split('.')[-1]}")
 
-def get_file_path_pix(instance, filename):
-    return os.path.join("img_qrcodes", f"{uuid.uuid4()}.{filename.split('.')[-1]}")
+#def get_file_path_pix(instance, filename):
+    #return os.path.join("img_qrcodes", f"{uuid.uuid4()}.{filename.split('.')[-1]}")
 
 
 class Cliente(models.Model):
