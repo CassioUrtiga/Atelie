@@ -4,12 +4,28 @@ import os
 import dj_database_url
 import cloudinary
 
+# Configurações do cloudinary para imagens
+STORAGES = {
+    "default": {
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "cloudinary_storage.storage.StaticHashedCloudinaryStorage",
+    },
+}
+
 cloudinary.config(
     cloud_name=config('CLOUD_NAME'),
     api_key=config('CLOUD_API_KEY'),
     api_secret=config('CLOUD_API_SECRET'),
     secure=True
 )
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': config('CLOUD_NAME'),
+    'API_KEY': config('CLOUD_API_KEY'),
+    'API_SECRET': config('CLOUD_API_SECRET'),
+}
 
 # Tipo de ambiente de desenvolvimento (local, production, workflow)
 development = config('DEVELOPMENT')
@@ -60,18 +76,6 @@ ROOT_URLCONF = 'atelie.urls'
 
 if development == 'production':
     CSRF_TRUSTED_ORIGINS = [config('ORIGIN')]
-
-STORAGES = {
-    "default": {
-        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
-    },
-    "staticfiles": {
-        "BACKEND": "cloudinary_storage.storage.StaticCloudinaryStorage", 
-    },
-}
-
-STATICFILES_STORAGE = "cloudinary_storage.storage.StaticHashedCloudinaryStorage"
-DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
 
 TEMPLATES = [
     {
