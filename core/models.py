@@ -1,7 +1,3 @@
-#import uuid
-#import os
-#from stdimage.models import StdImageField
-
 from django.db import models
 from django.contrib.auth.models import User
 from django.dispatch import receiver
@@ -9,12 +5,6 @@ from django.db.models.signals import pre_delete
 
 from cloudinary.models import CloudinaryField
 import cloudinary.uploader
-
-#def get_file_path_pedido(instance, filename):
-    #return os.path.join("img_pedidos", f"{uuid.uuid4()}.{filename.split('.')[-1]}")
-
-#def get_file_path_pix(instance, filename):
-    #return os.path.join("img_qrcodes", f"{uuid.uuid4()}.{filename.split('.')[-1]}")
 
 
 class Cliente(models.Model):
@@ -43,7 +33,6 @@ class Administrador(models.Model):
         return self.nome
 
 class ImagemPedido(models.Model):
-    #img = StdImageField('Imagem do pedido', upload_to=get_file_path_pedido, blank=True, null=True, default=None)
     img = CloudinaryField('Imagem do pedido', folder='img_pedidos', blank=True, null=True, default=None)
 
     class Meta:
@@ -110,7 +99,6 @@ class Pedido(models.Model):
     atualizacao_status = models.DateTimeField(auto_now=True)
     preco = models.CharField(max_length=10, default="")
     forma_pagamento = models.CharField(max_length=50, default="")
-    #pix_qrcode = StdImageField('Pix qrcode', upload_to=get_file_path_pix, blank=True, null=True, default=None)
     pix_qrcode = CloudinaryField('Pix qrcode', folder='img_qrcodes', blank=True, null=True, default=None)
     img = models.ManyToManyField(ImagemPedido)
     
@@ -161,25 +149,3 @@ def pedido_delete_qrcode(sender, instance, **kwargs):
             cloudinary.uploader.destroy(instance.pix_qrcode.public_id)
         except Exception as e:
             print(f"Erro ao deletar QR Code do Cloudinary: {e}")
-
-#@receiver(pre_delete, sender=Pedido)
-#def pedido_delete_img(sender, instance, **kwargs):
-    #imagens = list(instance.img.all())
-
-    #for imagem_obj in imagens:
-        #if imagem_obj.img and imagem_obj.img.path:
-            #if os.path.isfile(imagem_obj.img.path):
-                #try:
-                    #os.remove(imagem_obj.img.path)
-                #except OSError:
-                    #pass
-        #imagem_obj.delete()
-
-#@receiver(pre_delete, sender=Pedido)
-#def pedido_delete_qrcode(sender, instance, **kwargs):
-    #if instance.pix_qrcode and hasattr(instance.pix_qrcode, 'path'):
-        #try:
-            #if os.path.isfile(instance.pix_qrcode.path):
-                #os.remove(instance.pix_qrcode.path)
-        #except ValueError:
-            #pass

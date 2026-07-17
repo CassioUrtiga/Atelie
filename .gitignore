@@ -9,9 +9,3 @@ __pycache__
 .idea
 
 .env
-
-media/img_pedidos/*
-media/img_qrcodes/*
-
-!media/img_pedidos/.gitkeep
-!media/img_qrcodes/.gitkeep
