@@ -1,8 +1,10 @@
-from pathlib import Path
-from decouple import config
 import os
 import dj_database_url
 import cloudinary
+
+from pathlib import Path
+from decouple import config
+
 
 # Configurações do cloudinary para imagens
 STORAGES = {
