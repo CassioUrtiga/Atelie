@@ -16,7 +16,7 @@ STORAGES = {
     },
 }
 
-# STATICFILES_STORAGE = "cloudinary_storage.storage.StaticCloudinaryStorage"
+STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
 
 cloudinary.config(
     cloud_name=config('CLOUD_NAME', default=''),
@@ -53,13 +53,13 @@ else:
 
 # Application definition
 INSTALLED_APPS = [
-    'cloudinary_storage',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'cloudinary_storage',
     'cloudinary',
     'corsheaders',
     'core',
