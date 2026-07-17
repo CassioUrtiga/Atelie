@@ -15,16 +15,16 @@ STORAGES = {
 }
 
 cloudinary.config(
-    cloud_name=config('CLOUD_NAME'),
-    api_key=config('CLOUD_API_KEY'),
-    api_secret=config('CLOUD_API_SECRET'),
+    cloud_name=config('CLOUD_NAME', default=''),
+    api_key=config('CLOUD_API_KEY', default=''),
+    api_secret=config('CLOUD_API_SECRET', default=''),
     secure=True
 )
 
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': config('CLOUD_NAME'),
-    'API_KEY': config('CLOUD_API_KEY'),
-    'API_SECRET': config('CLOUD_API_SECRET'),
+    'CLOUD_NAME': config('CLOUD_NAME', default=''),
+    'API_KEY': config('CLOUD_API_KEY', default=''),
+    'API_SECRET': config('CLOUD_API_SECRET', default=''),
 }
 
 # Tipo de ambiente de desenvolvimento (local, production, workflow)
