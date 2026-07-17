@@ -6,7 +6,7 @@ from pathlib import Path
 from decouple import config
 
 
-# Configurações do cloudinary para imagens
+# Configurações do cloudinary para os arquivos statics
 STORAGES = {
     "default": {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",

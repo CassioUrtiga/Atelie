@@ -48,6 +48,10 @@
             gallery: '#my-gallery',
             children: 'a',
             pswpModule: () => import('https://unpkg.com/photoswipe/dist/photoswipe.esm.js')
+
+            initialZoomLevel: () => 1,
+            secondaryZoomLevel: 'fit',
+            maxZoomLevel: 2,
         });
         
         lightbox.init();
