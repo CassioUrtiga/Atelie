@@ -1,0 +1,89 @@
+<div class="modal fade" id="editarPedido{{ pedido.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold text-dark d-flex align-items-center gap-2" id="exampleModalLongTitle">
+                    Editar Pedido<span class="text-secondary">Nº {{ pedido.id }}</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{% url 'editar-pedido' pedido.id %}" id="formularioEditarPedido" method="post" autocomplete="off">
+                {% csrf_token %}
+                <div class="modal-body p-4">                  
+                    <div class="row g-3">
+                        {% if pedido.status in 'concluido' %}
+                            <div class="border border-secondary-subtle rounded-3 p-3 bg-light shadow-sm mb-4">
+                                <div class="form-label fw-semibold text-secondary">Metódo de pagamento</div>
+                                <select name="metodo" class="form-select" aria-label="Pagamento">
+                                    <option value="" selected>Padrão</option>
+                                    <option value="dinheiro">Dinheiro</option>
+                                    <option value="pix">Pix</option>
+                                </select>
+                            </div>
+                        {% endif %}
+                        <div class="border border-secondary-subtle rounded-3 p-3 bg-light shadow-sm mb-4">
+                            <div class="form-label fw-semibold text-secondary">Definir a situação</div>
+                            <select name="status" class="form-select" aria-label="Status do pedido">
+                                {% if pedido.status not in 'concluido' %}
+                                    {% if pedido.status not in 'andamento' %}
+                                        <option value="recebido" {% if pedido.status == 'andamento' %}selected{% endif %}>Recebido</option>
+                                    {% endif %}
+                                    <option value="andamento" {% if pedido.status == 'andamento' %}selected{% endif %}>Andamento</option>
+                                {% endif %}
+                                <option value="concluido" {% if pedido.status == 'concluido' %}selected{% endif %}>Concluído</option>
+                                
+                                <option value="pago" {% if pedido.status == 'pago' %}selected{% endif %}>Pago</option>
+                                
+                                <option value="cancelado" {% if pedido.status == 'cancelado' %}selected{% endif %}>Cancelado</option>
+                            </select>
+                        </div>
+                        <div class="border border-secondary-subtle rounded-3 p-3 bg-light shadow-sm mb-4">
+                            <div class="form-label fw-semibold text-secondary">Definir o preço</div>
+                            <div class="mb-3">
+                                <div class="input-group">
+                                    <span class="input-group-text" id="addon-wrapper" style="background-color: rgba(43, 122, 90, 0.1); color: #2b7a5a; border-color: rgba(43, 122, 90, 0.25);">
+                                        R$
+                                    </span>
+                                    <input type="number" 
+                                        name="preco" 
+                                        id="precoPedido" 
+                                        class="form-control" 
+                                        placeholder="0,00" 
+                                        step="0.01" 
+                                        min="0" 
+                                        value={{ pedido.preco }}
+                                        aria-describedby="addon-wrapper"
+                                        {% if pedido.status in 'concluido' %}disabled{% endif %}
+                                        style="border-color: rgba(43, 122, 90, 0.25); transition: all 0.2s ease;">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="border border-secondary-subtle rounded-3 p-3 bg-light shadow-sm mb-4">
+                            <div class="form-floating">
+                                <textarea class="form-control" placeholder="Adicione uma observação/comentário" name="observacao" id="floatingTextarea2" style="height: 100px">{{ pedido.observacao }}</textarea>
+                                <label for="floatingTextarea2">Adicionar observação/comentário</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light border-top-0 d-flex w-100 gap-2 m-0 p-3">
+                    <button type="button" 
+                        class="btn d-inline-flex align-items-center justify-content-center" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#excluirPedido{{ pedido.id }}"
+                        style="background-color: rgba(220, 53, 69, 0.1); 
+                            color: #dc3545; 
+                            border: 1px solid rgba(220, 53, 69, 0.2);
+                            font-weight: 500;
+                            transition: all 0.2s ease;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3 me-2" viewBox="0 0 16 16">
+                            <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5"/>
+                        </svg>
+                        Excluir
+                    </button>
+                    <button type="submit" class="btn btn-primary flex-grow-1">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

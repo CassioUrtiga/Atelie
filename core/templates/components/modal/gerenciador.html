@@ -1,0 +1,122 @@
+<div class="modal fade" id="modalServicos" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Gerenciador</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{% url 'gerenciar' %}" id="formularioAddServicos" method="post" autocomplete="off">
+                {% csrf_token %}
+                <div class="modal-body p-4">                  
+                    <div class="row g-3">
+                        <div class="border border-secondary-subtle rounded-3 p-3 bg-light shadow-sm mb-4 tag-wrapper">
+                            <div class="form-label fw-semibold text-secondary">Tipos de Serviços</div>
+                            <div id="container-servicos" class="form-control d-flex flex-wrap align-items-center gap-2 py-2 tag-container" style="cursor: text;">
+                                {% for servico in servicos %}
+                                    {% if servico.disponivel %}
+                                        <span class="badge bg-primary d-flex align-items-center gap-2 p-2 fs-6 tag-predefinida">
+                                            {{ servico.servico }}
+                                            <button type="button" class="btn-close btn-close-white btn-remover-predefinido" style="font-size: 0.6rem;" data-item="{{ servico.servico }}"></button>
+                                        </span>
+                                    {% endif %}
+                                {% endfor %}
+                                <input type="text" name="servicos0" class="border-0 flex-grow-1 tag-input" style="outline: none;" placeholder="Digite e aperte Enter ou Vírgula">
+                            </div>
+                            <div id="removidos-servicos" class="text-muted small mb-3 d-flex align-items-center gap-2 flex-wrap bg-light p-2 rounded border border-light-subtle container-removidos {% if not servicos_indisponiveis|length %}d-none{% endif %}">
+                                <span class="fw-semibold text-secondary d-flex align-items-center gap-1">
+                                    Removidos:
+                                </span>
+                                {% if servicos_indisponiveis|length %}
+                                    {% for servico in servicos_indisponiveis %}
+                                        <span class="badge bg-body-secondary text-secondary-emphasis border border-secondary-subtle px-2 py-1.5 rounded-pill shadow-sm transition-all opacity-75 btn-readicionar d-inline-flex align-items-center gap-2" 
+                                            style="cursor: pointer;" 
+                                            title="Clique para adicionar novamente" 
+                                            data-item="{{ servico.servico }}">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-repeat" viewBox="0 0 16 16">
+                                                <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41m-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9"/>
+                                                <path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5 5 0 0 0 8 3M3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9z"/>
+                                            </svg>
+                                            {{ servico.servico }}
+                                        </span>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                            <input type="hidden" name="servicos" id="input-servicos" class="itens-escondidos" value="{% for servico in servicos %}{% if servico.disponivel %}{{ servico.servico }}{% if not forloop.last %},{% endif %}{% endif %}{% endfor %}">
+                        </div>
+                        <div class="border border-secondary-subtle rounded-3 p-3 bg-light shadow-sm mb-4 tag-wrapper">
+                            <div class="form-label fw-semibold text-secondary">Tipos de Roupas</div>
+                            <div id="container-roupas" class="form-control d-flex flex-wrap align-items-center gap-2 py-2 tag-container" style="cursor: text;">
+                                {% for roupa in roupas %}
+                                    {% if roupa.disponivel %}
+                                        <span class="badge bg-primary d-flex align-items-center gap-2 p-2 fs-6 tag-predefinida">
+                                            {{ roupa.roupa }}
+                                            <button type="button" class="btn-close btn-close-white btn-remover-predefinido" style="font-size: 0.6rem;" data-item="{{ roupa.roupa }}"></button>
+                                        </span>
+                                    {% endif %}
+                                {% endfor %}
+                                <input type="text" name="roupas0" class="border-0 flex-grow-1 tag-input" style="outline: none;" placeholder="Digite e aperte Enter ou Vírgula">
+                            </div>
+                            <div id="removidos-roupas" class="text-muted small mb-3 d-flex align-items-center gap-2 flex-wrap bg-light p-2 rounded border border-light-subtle container-removidos {% if not roupas_indisponiveis|length %}d-none{% endif %}">
+                                <span class="fw-semibold text-secondary d-flex align-items-center gap-1">
+                                    Removidos:
+                                </span>
+                                {% if roupas_indisponiveis|length %}
+                                    {% for roupa in roupas_indisponiveis %}
+                                        <span class="badge bg-body-secondary text-secondary-emphasis border border-secondary-subtle px-2 py-1.5 rounded-pill shadow-sm transition-all opacity-75 btn-readicionar d-inline-flex align-items-center gap-2" 
+                                            style="cursor: pointer;" 
+                                            title="Clique para adicionar novamente" 
+                                            data-item="{{ roupa.roupa }}">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-repeat" viewBox="0 0 16 16">
+                                                <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41m-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9"/>
+                                                <path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5 5 0 0 0 8 3M3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9z"/>
+                                            </svg>
+                                            {{ roupa.roupa }}
+                                        </span>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                            <input type="hidden" name="roupas" id="input-roupas" class="itens-escondidos" value="{% for roupa in roupas %}{% if roupa.disponivel %}{{ roupa.roupa }}{% if not forloop.last %},{% endif %}{% endif %}{% endfor %}">
+                        </div>
+                        <div class="border border-secondary-subtle rounded-3 p-3 bg-light shadow-sm mb-4 tag-wrapper">
+                            <div class="form-label fw-semibold text-secondary">Tipos de Tecidos</div>
+                            <div id="container-tecidos" class="form-control d-flex flex-wrap align-items-center gap-2 py-2 tag-container" style="cursor: text;">
+                                {% for tecido in tecidos %}
+                                    {% if tecido.disponivel %}
+                                        <span class="badge bg-primary d-flex align-items-center gap-2 p-2 fs-6 tag-predefinida">
+                                            {{ tecido.tecido }}
+                                            <button type="button" class="btn-close btn-close-white btn-remover-predefinido" style="font-size: 0.6rem;" data-item="{{ tecido.tecido }}"></button>
+                                        </span>
+                                    {% endif %}
+                                {% endfor %}
+                                <input type="text" name="tecidos0" class="border-0 flex-grow-1 tag-input" style="outline: none;" placeholder="Digite e aperte Enter ou Vírgula">
+                            </div>
+                            <div id="removidos-tecidos" class="text-muted small mb-3 d-flex align-items-center gap-2 flex-wrap bg-light p-2 rounded border border-light-subtle container-removidos {% if not tecidos_indisponiveis|length %}d-none{% endif %}">
+                                <span class="fw-semibold text-secondary d-flex align-items-center gap-1">
+                                    Removidos:
+                                </span>
+                                {% if tecidos_indisponiveis|length %}
+                                    {% for tecido in tecidos_indisponiveis %}
+                                        <span class="badge bg-body-secondary text-secondary-emphasis border border-secondary-subtle px-2 py-1.5 rounded-pill shadow-sm transition-all opacity-75 btn-readicionar d-inline-flex align-items-center gap-2" 
+                                            style="cursor: pointer;" 
+                                            title="Clique para adicionar novamente" 
+                                            data-item="{{ tecido.tecido }}">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-repeat" viewBox="0 0 16 16">
+                                                <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41m-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9"/>
+                                                <path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5 5 0 0 0 8 3M3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9z"/>
+                                            </svg>
+                                            {{ tecido.tecido }}
+                                        </span>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                            <input type="hidden" name="tecidos" id="input-tecidos" class="itens-escondidos" value="{% for tecido in tecidos %}{% if tecido.disponivel %}{{ tecido.tecido }}{% if not forloop.last %},{% endif %}{% endif %}{% endfor %}">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light border-top-0 d-flex w-100 gap-2 m-0 p-3">
+                    <button type="submit" class="btn btn-primary col">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

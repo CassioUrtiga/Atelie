@@ -1,0 +1,28 @@
+<div class="modal fade" id="{% if estado == 'excluir' %}excluirPedido{% else %}cancelarPedido{% endif %}{{ pedido.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">
+                    {% if estado == 'excluir' %}
+                        Excluir Pedido
+                    {% else %}
+                        Cancelar Pedido
+                    {% endif %}
+                </h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Tem certeza que deseja {% if estado == 'excluir' %}EXCLUIR PERMANENTEMENTE{% else %}CANCELAR{% endif %} o <code>Pedido Nº{{ pedido.id }}</code>?
+            </div>
+            <div class="modal-footer d-flex w-100 gap-2">
+                <button type="button" class="btn btn-secondary flex-fill" data-bs-dismiss="modal">
+                    {% if estado == 'excluir' %}Cancelar{% else %}Fechar{% endif %}
+                </button>
+                
+                <a href="{% if estado == 'excluir' %}{% url 'excluir-pedido' pedido.id %}{% else %}{% url 'cancelar-pedido' pedido.id %}{% endif %}" class="btn btn-danger flex-fill d-inline-flex align-items-center justify-content-center">
+                    {% if estado == 'excluir' %}Excluir{% else %}Cancelar pedido{% endif %}
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
